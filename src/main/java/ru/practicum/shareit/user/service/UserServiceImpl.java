@@ -31,14 +31,6 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyExistsException(String.format("Email %s уже существует.", userDto.getEmail()));
         }
 
-        if (userDto.getEmail() == null || userDto.getEmail().isEmpty()) {
-            throw new UserValidationException("Email не может быть пустым.");
-        }
-
-        if (!EMAIL_PATTERN.matcher(userDto.getEmail()).matches()) {
-            throw new UserValidationException("Некорректный email");
-        }
-
         User user = userRepository.createUser(UserMapper.mapToUser(userDto)).orElseThrow(() ->
                 new UserAlreadyExistsException("Такой пользователь уже существует."));
 

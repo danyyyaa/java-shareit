@@ -14,4 +14,8 @@ public interface ItemRepository {
     Optional<Item> getItemById(long itemId);
 
     Collection<Item> getItems();
+
+    Collection<Item> getItemsByUserId(long userId);
+
+    Collection<Item> searchByText(String text, long userId);
 }

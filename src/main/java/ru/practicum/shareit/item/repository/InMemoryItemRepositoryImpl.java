@@ -1,12 +1,14 @@
 package ru.practicum.shareit.item.repository;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryItemRepositoryImpl implements ItemRepository {
@@ -35,5 +37,27 @@ public class InMemoryItemRepositoryImpl implements ItemRepository {
     @Override
     public Collection<Item> getItems() {
         return items.values();
+    }
+
+    @Override
+    public Collection<Item> getItemsByUserId(long userId) {
+        return items.values()
+                .stream()
+                .filter(item -> item.getOwner().getId() == userId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Item> searchByText(String text, long userId) {
+        String lowerCaseText = text.toLowerCase();
+
+        return items
+                .values()
+                .stream()
+                .filter(i -> i.getAvailable() &&
+                        (i.getDescription().toLowerCase().contains(lowerCaseText) ||
+                                i.getName().toLowerCase().contains(lowerCaseText))
+                )
+                .collect(Collectors.toList());
     }
 }

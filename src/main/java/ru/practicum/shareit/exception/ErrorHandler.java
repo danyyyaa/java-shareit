@@ -1,7 +1,8 @@
-package ru.practicum.shareit.util;
+package ru.practicum.shareit.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.practicum.shareit.item.exception.ItemAlreadyExistsException;
@@ -15,24 +16,38 @@ import ru.practicum.shareit.user.exception.UserValidationException;
 @ControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class,
+            ItemNotFoundException.class,
+            EntityNotFoundException.class})
     public ResponseEntity<ErrorResponse> catchNotFoundException(RuntimeException e) {
         return new ResponseEntity<>(
                 new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()),
                 HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({UserValidationException.class, ItemValidationException.class})
+    @ExceptionHandler({UserValidationException.class,
+            ItemValidationException.class,
+            MethodArgumentNotValidException.class})
     public ResponseEntity<ErrorResponse> catchValidationException(RuntimeException e) {
         return new ResponseEntity<>(
                 new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({UserAlreadyExistsException.class, ItemAlreadyExistsException.class, EmailAlreadyExistsException.class})
+    @ExceptionHandler({UserAlreadyExistsException.class,
+            ItemAlreadyExistsException.class,
+            EmailAlreadyExistsException.class,
+            EntityAlreadyExistsException.class})
     public ResponseEntity<ErrorResponse> catchAlreadyExistsException(RuntimeException e) {
         return new ResponseEntity<>(
                 new ErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage()),
                 HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> catchRawException(Throwable e) {
+        return new ResponseEntity<>(
+                new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
