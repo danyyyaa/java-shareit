@@ -18,7 +18,7 @@ public class ItemDto {
 
     private String description;
 
-    private boolean available;
+    private Boolean available;
 
     private User owner;
 

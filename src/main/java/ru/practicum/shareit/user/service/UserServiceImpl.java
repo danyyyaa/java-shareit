@@ -3,10 +3,10 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.exception.DuplicateEmailException;
+import ru.practicum.shareit.user.exception.EmailAlreadyExistsException;
 import ru.practicum.shareit.user.exception.UserAlreadyExistsException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
-import ru.practicum.shareit.user.exception.ValidationException;
+import ru.practicum.shareit.user.exception.UserValidationException;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -28,15 +28,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
         if (isDuplicateEmail(userDto.getEmail())) {
-            throw new DuplicateEmailException("Ошибка. Такой email уже существует.");
+            throw new EmailAlreadyExistsException(String.format("Email %s уже существует.", userDto.getEmail()));
         }
 
         if (userDto.getEmail() == null || userDto.getEmail().isEmpty()) {
-            throw new ValidationException("Email не может быть пустым.");
+            throw new UserValidationException("Email не может быть пустым.");
         }
 
         if (!EMAIL_PATTERN.matcher(userDto.getEmail()).matches()) {
-            throw new ValidationException("Email не может быть пустым.");
+            throw new UserValidationException("Некорректный email");
         }
 
         User user = userRepository.createUser(UserMapper.mapToUser(userDto)).orElseThrow(() ->
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
         Set<String> emails = userRepository.getUsers().stream().map(User::getEmail).collect(Collectors.toSet());
 
         if (emails.contains(userDto.getEmail()) && (!userDto.getEmail().equals(user.getEmail()))) {
-                throw new DuplicateEmailException("Ошибка. Такой email уже существует.");
+                throw new EmailAlreadyExistsException(String.format("Email %s уже существует.", userDto.getEmail()));
         }
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(long id) {
         User user = userRepository.getUserById(id).orElseThrow(() ->
-                new UserNotFoundException("Пользователь не найден."));
+                new UserNotFoundException(String.format("Пользователь %s не найден.", id)));
 
         return UserMapper.mapToUserDto(user);
     }

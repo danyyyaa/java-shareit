@@ -15,13 +15,13 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
 
     private long userId = 1L;
 
-    Map<Long, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
 
     @Override
-    public Optional<User> createUser(User userDto) {
-        userDto.setId(userId++);
-        users.put(userDto.getId(), userDto);
-        return Optional.of(userDto);
+    public Optional<User> createUser(User user) {
+        user.setId(userId++);
+        users.put(user.getId(), user);
+        return Optional.of(user);
     }
 
     @Override
