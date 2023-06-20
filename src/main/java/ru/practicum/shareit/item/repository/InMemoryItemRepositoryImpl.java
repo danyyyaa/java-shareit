@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class InMemoryItemRepositoryImpl implements ItemRepository{
+public class InMemoryItemRepositoryImpl implements ItemRepository {
 
     private long itemId = 1L;
 
@@ -18,7 +18,7 @@ public class InMemoryItemRepositoryImpl implements ItemRepository{
     @Override
     public Optional<Item> createItem(Item item) {
         item.setId(itemId++);
-        items.put(item.getId() ,item);
+        items.put(item.getId(), item);
         return Optional.of(item);
     }
 
