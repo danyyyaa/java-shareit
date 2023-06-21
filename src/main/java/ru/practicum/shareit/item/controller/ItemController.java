@@ -1,12 +1,18 @@
 package ru.practicum.shareit.item.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.validation.Create;
 
-import javax.validation.Valid;
 import java.util.Collection;
+import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.util.Constant.USER_ID_HEADER;
 
 @RestController
 @RequestMapping("/items")
@@ -16,32 +22,41 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createItem(@Valid @RequestBody ItemDto itemDto,
-                              @RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemService.createItem(itemDto, userId);
+    public ItemDto createItem(@Validated(Create.class) @RequestBody ItemDto itemDto,
+                              @RequestHeader(USER_ID_HEADER) long userId) {
+        Item item = itemService.createItem(ItemMapper.mapToItem(itemDto), userId);
+        return ItemMapper.mapToItemDto(item);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@RequestBody ItemDto itemDto,
-                              @RequestHeader("X-Sharer-User-Id") long userId,
+                              @RequestHeader(USER_ID_HEADER) long userId,
                               @PathVariable long itemId) {
-        return itemService.updateItem(itemDto, itemId, userId);
+        Item item = itemService.updateItem(ItemMapper.mapToItem(itemDto), itemId, userId);
+        return ItemMapper.mapToItemDto(item);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDto getItemById(@RequestHeader(USER_ID_HEADER) long userId,
                                @PathVariable long itemId) {
-        return itemService.getItemById(userId, itemId);
+        Item item = itemService.getItemById(userId, itemId);
+        return ItemMapper.mapToItemDto(item);
     }
 
     @GetMapping
-    public Collection<ItemDto> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemService.getItemsByUserId(userId);
+    public Collection<ItemDto> getItemsByUserId(@RequestHeader(USER_ID_HEADER) long userId) {
+        return itemService.getItemsByUserId(userId)
+                .stream()
+                .map(ItemMapper::mapToItemDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/search")
     public Collection<ItemDto> searchByText(@RequestParam(name = "text") String text,
-                                @RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemService.searchByText(text, userId);
+                                            @RequestHeader(USER_ID_HEADER) long userId) {
+        return itemService.searchByText(text, userId)
+                .stream()
+                .map(ItemMapper::mapToItemDto)
+                .collect(Collectors.toList());
     }
 }

@@ -3,21 +3,13 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EntityNotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.exception.ItemNotFoundException;
-import ru.practicum.shareit.item.exception.ItemValidationException;
-import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.exception.UserNotFoundException;
-import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -25,68 +17,58 @@ public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
 
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Override
-    public ItemDto createItem(ItemDto itemDto, long userId) {
-        UserDto owner = userService.getUserById(userId);
-        itemDto.setOwner(UserMapper.mapToUser(owner));
+    public Item createItem(Item item, long ownerId) {
+        User owner = userRepository.getUserById(ownerId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Пользователь %s не найден.", ownerId)));
 
-        Optional<Item> createdItem = itemRepository.createItem(ItemMapper.mapToItem(itemDto));
-        assert createdItem.isPresent();
-        return ItemMapper.mapToItemDto(createdItem.get());
+        item.setOwner(owner);
+
+        return itemRepository.createItem(item, ownerId);
     }
 
     @Override
-    public ItemDto updateItem(ItemDto itemDto, long itemId, long userId) {
-        Item item = itemRepository.getItemById(itemId).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Предмет не найден: %s", itemDto)));
+    public Item updateItem(Item item, long itemId, long userId) {
+        Item updatedItem = itemRepository.getItemById(itemId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Предмет не найден: %s", item)));
 
-        if (item.getOwner().getId() != userId) {
+        if (updatedItem.getOwner().getId() != userId) {
             throw new EntityNotFoundException(
-                    String.format("У пользователя %d нету предмета %s.", userId, itemDto));
+                    String.format("У пользователя %d нету предмета %s.", userId, item));
         }
 
-        if (itemDto.getName() != null && !itemDto.getName().isBlank()) {
-            item.setName(itemDto.getName());
+        if (item.getName() != null && !item.getName().isBlank()) {
+            updatedItem.setName(item.getName());
         }
-        if (itemDto.getDescription() != null && !itemDto.getDescription().isBlank()) {
-            item.setDescription(itemDto.getDescription());
+        if (item.getDescription() != null && !item.getDescription().isBlank()) {
+            updatedItem.setDescription(item.getDescription());
         }
-        if (itemDto.getAvailable() != null) {
-            item.setAvailable(itemDto.getAvailable());
+        if (item.getAvailable() != null) {
+            updatedItem.setAvailable(item.getAvailable());
         }
 
-        Optional<Item> updatedItem = itemRepository.updateItem(item, itemId, userId);
-        assert updatedItem.isPresent();
-        return ItemMapper.mapToItemDto(updatedItem.get());
+        return updatedItem;
     }
 
     @Override
-    public ItemDto getItemById(long userId, long itemId) {
-        Item item = itemRepository.getItemById(itemId).orElseThrow(() ->
+    public Item getItemById(long userId, long itemId) {
+        return itemRepository.getItemById(itemId).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Item %s не найден.", itemId)));
-        return ItemMapper.mapToItemDto(item);
     }
 
     @Override
-    public Collection<ItemDto> getItemsByUserId(long userId) {
-        return itemRepository.getItemsByUserId(userId)
-                .stream()
-                .map(ItemMapper::mapToItemDto)
-                .collect(Collectors.toList());
+    public Collection<Item> getItemsByUserId(long userId) {
+        return itemRepository.getItemsByUserId(userId);
     }
 
     @Override
-    public Collection<ItemDto> searchByText(String text, long userId) {
-        if (text == null || text.isBlank()) {
-            return new ArrayList<>();
+    public Collection<Item> searchByText(String text, long userId) {
+        if (text.isBlank()) {
+            return Collections.emptyList();
         }
 
-        return itemRepository
-                .searchByText(text, userId)
-                .stream()
-                .map(ItemMapper::mapToItemDto)
-                .collect(Collectors.toList());
+        return itemRepository.searchByText(text, userId);
     }
 }

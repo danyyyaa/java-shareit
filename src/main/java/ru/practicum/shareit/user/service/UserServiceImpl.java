@@ -2,19 +2,13 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.user.exception.EmailAlreadyExistsException;
-import ru.practicum.shareit.user.exception.UserAlreadyExistsException;
-import ru.practicum.shareit.user.exception.UserNotFoundException;
-import ru.practicum.shareit.user.exception.UserValidationException;
-import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,57 +17,44 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^.+@.+\\..+$");
-
     @Override
-    public UserDto createUser(UserDto userDto) {
-        if (isDuplicateEmail(userDto.getEmail())) {
-            throw new EmailAlreadyExistsException(String.format("Email %s уже существует.", userDto.getEmail()));
+    public User createUser(User user) {
+        if (isDuplicateEmail(user.getEmail())) {
+            throw new EmailAlreadyExistsException(String.format("Email %s уже существует.", user.getEmail()));
         }
 
-        User user = userRepository.createUser(UserMapper.mapToUser(userDto)).orElseThrow(() ->
-                new UserAlreadyExistsException("Такой пользователь уже существует."));
-
-        return UserMapper.mapToUserDto(user);
+        return userRepository.createUser(user);
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto, Long userId) {
-        User user = userRepository.getUserById(userId).orElseThrow(() ->
-                new UserNotFoundException(String.format("Пользователь %s не найден.", userId)));
+    public User updateUser(User user, Long userId) {
+        User updatedUser = userRepository.getUserById(userId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Пользователь %s не найден.", user)));
 
         Set<String> emails = userRepository.getUsers().stream().map(User::getEmail).collect(Collectors.toSet());
 
-        if (emails.contains(userDto.getEmail()) && (!userDto.getEmail().equals(user.getEmail()))) {
-                throw new EmailAlreadyExistsException(String.format("Email %s уже существует.", userDto.getEmail()));
+        if (emails.contains(user.getEmail()) && (!user.getEmail().equals(updatedUser.getEmail()))) {
+            throw new EmailAlreadyExistsException(String.format("Email %s уже существует.", user.getEmail()));
         }
-        if (userDto.getName() != null) {
-            user.setName(userDto.getName());
+        if (user.getName() != null && !updatedUser.getName().isBlank()) {
+            updatedUser.setName(user.getName());
         }
-        if (userDto.getEmail() != null) {
-            user.setEmail(userDto.getEmail());
+        if (user.getEmail() != null && !updatedUser.getEmail().isBlank()) {
+            updatedUser.setEmail(user.getEmail());
         }
 
-        Optional<User> updatedUser = userRepository.updateUser(user, userId);
-        assert updatedUser.isPresent();
-        return UserMapper.mapToUserDto(updatedUser.get());
+        return updatedUser;
     }
 
     @Override
-    public UserDto getUserById(long id) {
-        User user = userRepository.getUserById(id).orElseThrow(() ->
-                new UserNotFoundException(String.format("Пользователь %s не найден.", id)));
-
-        return UserMapper.mapToUserDto(user);
+    public User getUserById(long id) {
+        return userRepository.getUserById(id).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Пользователь %s не найден.", id)));
     }
 
     @Override
-    public Collection<UserDto> getUsers() {
-        return userRepository
-                .getUsers()
-                .stream()
-                .map(UserMapper::mapToUserDto)
-                .collect(Collectors.toSet());
+    public Collection<User> getUsers() {
+        return userRepository.getUsers();
     }
 
     @Override

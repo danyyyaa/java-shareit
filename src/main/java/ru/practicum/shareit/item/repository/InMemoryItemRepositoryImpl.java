@@ -1,13 +1,9 @@
 package ru.practicum.shareit.item.repository;
 
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -17,16 +13,23 @@ public class InMemoryItemRepositoryImpl implements ItemRepository {
 
     private final Map<Long, Item> items = new HashMap<>();
 
+    private final Map<Long, List<Item>> userItemIndex = new HashMap<>();
+
     @Override
-    public Optional<Item> createItem(Item item) {
+    public Item createItem(Item item, long userId) {
         item.setId(itemId++);
+
         items.put(item.getId(), item);
-        return Optional.of(item);
+
+        List<Item> itemList = userItemIndex.computeIfAbsent(userId, k -> new ArrayList<>());
+        itemList.add(item);
+
+        return item;
     }
 
     @Override
-    public Optional<Item> updateItem(Item item, long itemId, long userId) {
-        return Optional.ofNullable(items.put(itemId, item));
+    public Item updateItem(Item item, long itemId, long userId) {
+        return items.put(itemId, item);
     }
 
     @Override
@@ -36,15 +39,12 @@ public class InMemoryItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Collection<Item> getItems() {
-        return items.values();
+        return List.copyOf(items.values());
     }
 
     @Override
     public Collection<Item> getItemsByUserId(long userId) {
-        return items.values()
-                .stream()
-                .filter(item -> item.getOwner().getId() == userId)
-                .collect(Collectors.toList());
+        return userItemIndex.get(userId);
     }
 
     @Override

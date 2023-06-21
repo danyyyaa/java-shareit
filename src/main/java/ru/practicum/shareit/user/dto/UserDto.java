@@ -1,30 +1,27 @@
 package ru.practicum.shareit.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.validation.Create;
+import ru.practicum.shareit.validation.Update;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserDto {
 
     private long id;
 
-    @NotBlank
+    @NotBlank(groups = {Create.class})
     private String name;
 
-    @NotBlank
-    @Email
+    @NotBlank(groups = {Create.class})
+    @Email(groups = {Create.class, Update.class})
     private String email;
 }
