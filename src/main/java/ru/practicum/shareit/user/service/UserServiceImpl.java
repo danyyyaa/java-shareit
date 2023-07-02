@@ -2,7 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.EntityNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.exception.EmailAlreadyExistsException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user, Long userId) {
         User updatedUser = userRepository.getUserById(userId).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Пользователь %s не найден.", user)));
+                new NotFoundException(String.format("Пользователь %s не найден.", user)));
 
         Set<String> emails = userRepository.getUsers().stream().map(User::getEmail).collect(Collectors.toSet());
 
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(long id) {
         return userRepository.getUserById(id).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Пользователь %s не найден.", id)));
+                new NotFoundException(String.format("Пользователь %s не найден.", id)));
     }
 
     @Override
