@@ -23,15 +23,16 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyExistsException(String.format("Email %s уже существует.", user.getEmail()));
         }
 
-        return userRepository.createUser(user);
+        return userRepository.save(user);
+
     }
 
     @Override
     public User updateUser(User user, Long userId) {
-        User updatedUser = userRepository.getUserById(userId).orElseThrow(() ->
+        User updatedUser = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", user)));
 
-        Set<String> emails = userRepository.getUsers().stream().map(User::getEmail).collect(Collectors.toSet());
+        Set<String> emails = userRepository.findAll().stream().map(User::getEmail).collect(Collectors.toSet());
 
         if (emails.contains(user.getEmail()) && (!user.getEmail().equals(updatedUser.getEmail()))) {
             throw new EmailAlreadyExistsException(String.format("Email %s уже существует.", user.getEmail()));
@@ -43,27 +44,28 @@ public class UserServiceImpl implements UserService {
             updatedUser.setEmail(user.getEmail());
         }
 
+        userRepository.save(updatedUser);
         return updatedUser;
     }
 
     @Override
     public User getUserById(long id) {
-        return userRepository.getUserById(id).orElseThrow(() ->
+        return userRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", id)));
     }
 
     @Override
     public Collection<User> getUsers() {
-        return userRepository.getUsers();
+        return userRepository.findAll();
     }
 
     @Override
     public void deleteUserById(long id) {
-        userRepository.deleteUserById(id);
+        userRepository.deleteById(id);
     }
 
     private boolean isDuplicateEmail(String userEmail) {
-        Set<String> emails = userRepository.getUsers().stream().map(User::getEmail).collect(Collectors.toSet());
+        Set<String> emails = userRepository.findAll().stream().map(User::getEmail).collect(Collectors.toSet());
         return emails.contains(userEmail);
     }
 }

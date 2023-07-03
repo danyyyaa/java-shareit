@@ -19,9 +19,10 @@ public class ItemServiceImpl implements ItemService {
 
     private final UserRepository userRepository;
 
+
     @Override
     public Item createItem(Item item, long ownerId) {
-        User owner = userRepository.getUserById(ownerId).orElseThrow(() ->
+        User owner = userRepository.findById(ownerId).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", ownerId)));
 
         item.setOwner(owner);
