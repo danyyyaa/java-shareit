@@ -2,12 +2,13 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.user.exception.EmailAlreadyExistsException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,11 +21,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(User user) {
         if (isDuplicateEmail(user.getEmail())) {
-            throw new EmailAlreadyExistsException(String.format("Email %s уже существует.", user.getEmail()));
+            throw new AlreadyExistsException(String.format("Email %s уже существует.", user.getEmail()));
         }
 
         return userRepository.save(user);
-
     }
 
     @Override
@@ -32,10 +32,14 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", user)));
 
-        Set<String> emails = userRepository.findAll().stream().map(User::getEmail).collect(Collectors.toSet());
+        Set<String> emails = userRepository
+                .findUsersByEmail(user.getEmail())
+                .stream()
+                .map(User::getEmail)
+                .collect(Collectors.toSet());
 
         if (emails.contains(user.getEmail()) && (!user.getEmail().equals(updatedUser.getEmail()))) {
-            throw new EmailAlreadyExistsException(String.format("Email %s уже существует.", user.getEmail()));
+            throw new AlreadyExistsException(String.format("Email %s уже существует.", user.getEmail()));
         }
         if (user.getName() != null && !updatedUser.getName().isBlank()) {
             updatedUser.setName(user.getName());
@@ -65,7 +69,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean isDuplicateEmail(String userEmail) {
-        Set<String> emails = userRepository.findAll().stream().map(User::getEmail).collect(Collectors.toSet());
-        return emails.contains(userEmail);
+        Optional<String> email = userRepository.findUsersByEmail(userEmail).stream().map(User::getEmail).findAny();
+        return email.isPresent();
     }
 }

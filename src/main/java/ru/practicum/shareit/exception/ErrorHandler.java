@@ -6,7 +6,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.user.exception.EmailAlreadyExistsException;
 
 @Slf4j
 @RestControllerAdvice
@@ -27,8 +26,8 @@ public class ErrorHandler {
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler({AlreadyExistsException.class, EmailAlreadyExistsException.class})
-    public ErrorResponse catchAlreadyExistsException(RuntimeException e) {
+    @ExceptionHandler()
+    public ErrorResponse catchAlreadyExistsException(AlreadyExistsException e) {
         log.debug("Получен статус 409 Conflict {}", e.getMessage(), e);
         return new ErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage());
     }

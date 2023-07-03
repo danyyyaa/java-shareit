@@ -27,12 +27,12 @@ public class ItemServiceImpl implements ItemService {
 
         item.setOwner(owner);
 
-        return itemRepository.createItem(item, ownerId);
+        return itemRepository.save(item);
     }
 
     @Override
     public Item updateItem(Item item, long itemId, long userId) {
-        Item updatedItem = itemRepository.getItemById(itemId).orElseThrow(() ->
+        Item updatedItem = itemRepository.findById(itemId).orElseThrow(() ->
                 new NotFoundException(String.format("Предмет не найден: %s", item)));
 
         if (updatedItem.getOwner().getId() != userId) {
@@ -50,18 +50,20 @@ public class ItemServiceImpl implements ItemService {
             updatedItem.setAvailable(item.getAvailable());
         }
 
+        itemRepository.save(updatedItem);
+
         return updatedItem;
     }
 
     @Override
     public Item getItemById(long userId, long itemId) {
-        return itemRepository.getItemById(itemId).orElseThrow(() ->
+        return itemRepository.findById(itemId).orElseThrow(() ->
                 new NotFoundException(String.format("Item %s не найден.", itemId)));
     }
 
     @Override
     public Collection<Item> getItemsByUserId(long userId) {
-        return itemRepository.getItemsByUserId(userId);
+        return itemRepository.findAllByOwnerId(userId);
     }
 
     @Override
@@ -70,6 +72,6 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
 
-        return itemRepository.searchByText(text, userId);
+        return itemRepository.findItemsByText(text);
     }
 }
