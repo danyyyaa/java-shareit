@@ -1,6 +1,6 @@
 package ru.practicum.shareit.user.service;
 
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.User;
 
 import java.util.Collection;
 
@@ -8,7 +8,7 @@ public interface UserService {
 
     User createUser(User user);
 
-    User updateUser(User user, Long userId);
+    User updateUser(User user, long userId);
 
     User getUserById(long id);
 

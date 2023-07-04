@@ -4,13 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserRepository;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,27 +18,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User user) {
-        if (isDuplicateEmail(user.getEmail())) {
-            throw new AlreadyExistsException(String.format("Email %s уже существует.", user.getEmail()));
+        try {
+            return userRepository.save(user);
+        } catch (ConstraintViolationException e) {
+            throw new AlreadyExistsException(String.format("Пользователь с %s уже зарегистрирован.", user.getEmail()));
         }
-
-        return userRepository.save(user);
     }
 
     @Override
-    public User updateUser(User user, Long userId) {
+    public User updateUser(User user, long userId) {
         User updatedUser = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", user)));
 
-        Set<String> emails = userRepository
-                .findUsersByEmail(user.getEmail())
-                .stream()
-                .map(User::getEmail)
-                .collect(Collectors.toSet());
-
-        if (emails.contains(user.getEmail()) && (!user.getEmail().equals(updatedUser.getEmail()))) {
-            throw new AlreadyExistsException(String.format("Email %s уже существует.", user.getEmail()));
-        }
         if (user.getName() != null && !updatedUser.getName().isBlank()) {
             updatedUser.setName(user.getName());
         }
@@ -48,8 +37,11 @@ public class UserServiceImpl implements UserService {
             updatedUser.setEmail(user.getEmail());
         }
 
-        userRepository.save(updatedUser);
-        return updatedUser;
+        try {
+            return userRepository.save(updatedUser);
+        } catch (ConstraintViolationException e) {
+            throw new AlreadyExistsException(String.format("Пользователь с %s уже зарегистрирован.", user.getEmail()));
+        }
     }
 
     @Override
@@ -66,10 +58,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUserById(long id) {
         userRepository.deleteById(id);
-    }
-
-    private boolean isDuplicateEmail(String userEmail) {
-        Optional<String> email = userRepository.findUsersByEmail(userEmail).stream().map(User::getEmail).findAny();
-        return email.isPresent();
     }
 }
