@@ -6,13 +6,13 @@ import java.util.Collection;
 
 public interface UserService {
 
-    User createUser(User user);
+    User save(User user);
 
-    User updateUser(User user, long userId);
+    User update(User user, long userId);
 
-    User getUserById(long id);
+    User findById(long id);
 
-    Collection<User> getUsers();
+    Collection<User> findAll();
 
-    void deleteUserById(long id);
+    void deleteById(long id);
 }

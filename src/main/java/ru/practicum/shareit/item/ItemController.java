@@ -21,9 +21,9 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createItem(@Validated(Create.class) @RequestBody ItemDto itemDto,
+    public ItemDto saveItem(@Validated(Create.class) @RequestBody ItemDto itemDto,
                               @RequestHeader(USER_ID_HEADER) long userId) {
-        Item item = itemService.createItem(ItemMapper.mapToItem(itemDto), userId);
+        Item item = itemService.save(ItemMapper.mapToItem(itemDto), userId);
         return ItemMapper.mapToItemDto(item);
     }
 
@@ -31,20 +31,20 @@ public class ItemController {
     public ItemDto updateItem(@RequestBody ItemDto itemDto,
                               @RequestHeader(USER_ID_HEADER) long userId,
                               @PathVariable long itemId) {
-        Item item = itemService.updateItem(ItemMapper.mapToItem(itemDto), itemId, userId);
+        Item item = itemService.update(ItemMapper.mapToItem(itemDto), itemId, userId);
         return ItemMapper.mapToItemDto(item);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@RequestHeader(USER_ID_HEADER) long userId,
+    public ItemDto findItemById(@RequestHeader(USER_ID_HEADER) long userId,
                                @PathVariable long itemId) {
-        Item item = itemService.getItemById(userId, itemId);
+        Item item = itemService.findById(userId, itemId);
         return ItemMapper.mapToItemDto(item);
     }
 
     @GetMapping
-    public Collection<ItemDto> getItemsByUserId(@RequestHeader(USER_ID_HEADER) long userId) {
-        return itemService.getItemsByUserId(userId)
+    public Collection<ItemDto> findItemsByUserId(@RequestHeader(USER_ID_HEADER) long userId) {
+        return itemService.findItemsByUserId(userId)
                 .stream()
                 .map(ItemMapper::mapToItemDto)
                 .collect(Collectors.toList());

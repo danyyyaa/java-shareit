@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 
 public interface BookingService {
 
-    Booking createBooking(long itemId, LocalDateTime start, LocalDateTime end, long userId);
+    Booking save(long itemId, LocalDateTime start, LocalDateTime end, long userId);
 
-    Booking getBookingById(long id);
+    Booking findById(long id);
 
-    Booking updateBooking(Booking booking, long userId, long itemId);
+    Booking update(Booking booking, long userId, long itemId);
 }

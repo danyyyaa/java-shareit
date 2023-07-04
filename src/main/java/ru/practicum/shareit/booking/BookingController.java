@@ -19,9 +19,9 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public BookingAllFieldsDto createBooking(@Valid @RequestBody BookingSavingDto bookingSavingDto,
+    public BookingAllFieldsDto saveBooking(@Valid @RequestBody BookingSavingDto bookingSavingDto,
                                              @RequestHeader(USER_ID_HEADER) long userId) {
-        Booking booking = bookingService.createBooking(
+        Booking booking = bookingService.save(
                 bookingSavingDto.getItemId(),
                 bookingSavingDto.getStart(),
                 bookingSavingDto.getEnd(),
@@ -31,8 +31,8 @@ public class BookingController {
     }
 
     @GetMapping
-    public BookingAllFieldsDto getBookingById(@RequestHeader(USER_ID_HEADER) long userId) {
-        Booking booking = bookingService.getBookingById(userId);
+    public BookingAllFieldsDto findBookingById(@RequestHeader(USER_ID_HEADER) long userId) {
+        Booking booking = bookingService.findById(userId);
         return BookingMapper.mapToBookingAllFieldsDto(booking);
     }
 
@@ -40,7 +40,7 @@ public class BookingController {
     public BookingAllFieldsDto updateBooking(@RequestBody BookingAllFieldsDto bookingAllFieldsDto,
                                              @RequestHeader(USER_ID_HEADER) long userId,
                                              @PathVariable long itemId) {
-        Booking booking = bookingService.updateBooking(BookingMapper.mapToBooking(bookingAllFieldsDto), userId, itemId);
+        Booking booking = bookingService.update(BookingMapper.mapToBooking(bookingAllFieldsDto), userId, itemId);
         return BookingMapper.mapToBookingAllFieldsDto(booking);
     }
 }

@@ -25,7 +25,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
 
     @Override
-    public Booking createBooking(long itemId, LocalDateTime start, LocalDateTime end, long userId) {
+    public Booking save(long itemId, LocalDateTime start, LocalDateTime end, long userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", itemId)));
 
@@ -48,13 +48,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking getBookingById(long id) {
+    public Booking findById(long id) {
         return bookingRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(String.format("Бронирования %s не существует", id)));
     }
 
     @Override
-    public Booking updateBooking(Booking booking, long userId, long itemId) {
+    public Booking update(Booking booking, long userId, long itemId) {
         return null;
     }
 

@@ -17,7 +17,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public User createUser(User user) {
+    public User save(User user) {
         try {
             return userRepository.save(user);
         } catch (ConstraintViolationException e) {
@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user, long userId) {
+    public User update(User user, long userId) {
         User updatedUser = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", user)));
 
@@ -45,18 +45,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(long id) {
+    public User findById(long id) {
         return userRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", id)));
     }
 
     @Override
-    public Collection<User> getUsers() {
+    public Collection<User> findAll() {
         return userRepository.findAll();
     }
 
     @Override
-    public void deleteUserById(long id) {
+    public void deleteById(long id) {
         userRepository.deleteById(id);
     }
 }

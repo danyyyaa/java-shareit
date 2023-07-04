@@ -21,7 +21,7 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public Item createItem(Item item, long ownerId) {
+    public Item save(Item item, long ownerId) {
         User owner = userRepository.findById(ownerId).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", ownerId)));
 
@@ -31,7 +31,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item updateItem(Item item, long itemId, long userId) {
+    public Item update(Item item, long itemId, long userId) {
         Item updatedItem = itemRepository.findById(itemId).orElseThrow(() ->
                 new NotFoundException(String.format("Предмет не найден: %s", item)));
 
@@ -56,13 +56,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item getItemById(long userId, long itemId) {
+    public Item findById(long userId, long itemId) {
         return itemRepository.findById(itemId).orElseThrow(() ->
                 new NotFoundException(String.format("Item %s не найден.", itemId)));
     }
 
     @Override
-    public Collection<Item> getItemsByUserId(long userId) {
+    public Collection<Item> findItemsByUserId(long userId) {
         return itemRepository.findAllByOwnerId(userId);
     }
 

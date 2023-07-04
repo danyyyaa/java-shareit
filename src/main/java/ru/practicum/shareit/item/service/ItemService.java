@@ -6,13 +6,13 @@ import java.util.Collection;
 
 public interface ItemService {
 
-    Item createItem(Item item, long userId);
+    Item save(Item item, long userId);
 
-    Item updateItem(Item item, long itemId, long userId);
+    Item update(Item item, long itemId, long userId);
 
-    Item getItemById(long userId, long itemId);
+    Item findById(long userId, long itemId);
 
     Collection<Item> searchByText(String text, long userId);
 
-    Collection<Item> getItemsByUserId(long userId);
+    Collection<Item> findItemsByUserId(long userId);
 }
