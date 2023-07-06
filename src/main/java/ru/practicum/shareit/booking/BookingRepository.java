@@ -106,4 +106,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "where i.owner = :user " +
             "   and b.status = :status ")
     List<Booking> findByItemOwnerAndStatus(@Param("user") User itemOwner, @Param("status") BookingTimeState status, Sort start);
+
+
 }
