@@ -3,12 +3,17 @@ package ru.practicum.shareit.booking.service;
 import ru.practicum.shareit.booking.Booking;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 public interface BookingService {
 
     Booking save(long itemId, LocalDateTime start, LocalDateTime end, long userId);
 
-    Booking findById(long id);
+    Collection<Booking> findByUserId(long userId, String state);
 
-    Booking update(Booking booking, long userId, long itemId);
+    Booking updateAvailableStatus(long bookingId, Boolean state, long userId);
+
+    Booking findAllBookingsByUserId(long bookingId, long userId);
+
+    Collection<Booking> findOwnerBookings(long userId, String state);
 }

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.booking.BookingState;
+import ru.practicum.shareit.booking.enums.BookingState;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 

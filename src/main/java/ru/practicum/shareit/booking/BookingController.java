@@ -2,12 +2,15 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingAllFieldsDto;
 import ru.practicum.shareit.booking.dto.BookingSavingDto;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.validation.ValuesAllowedConstraint;
 
 import javax.validation.Valid;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.util.Constant.USER_ID_HEADER;
 
@@ -20,7 +23,7 @@ public class BookingController {
 
     @PostMapping
     public BookingAllFieldsDto saveBooking(@Valid @RequestBody BookingSavingDto bookingSavingDto,
-                                             @RequestHeader(USER_ID_HEADER) long userId) {
+                                           @RequestHeader(USER_ID_HEADER) long userId) {
         Booking booking = bookingService.save(
                 bookingSavingDto.getItemId(),
                 bookingSavingDto.getStart(),
@@ -31,16 +34,50 @@ public class BookingController {
     }
 
     @GetMapping
-    public BookingAllFieldsDto findBookingById(@RequestHeader(USER_ID_HEADER) long userId) {
-        Booking booking = bookingService.findById(userId);
+    public Collection<BookingAllFieldsDto> findAllBookingsByUserId(@RequestHeader(USER_ID_HEADER) long userId,
+                                                                   @ValuesAllowedConstraint(propName = "state",
+                                                                           values = {"all",
+                                                                                   "current",
+                                                                                   "past",
+                                                                                   "future",
+                                                                                   "waiting",
+                                                                                   "rejected"})
+                                                                   @RequestParam(defaultValue = "all") String state) {
+        return bookingService.findByUserId(userId, state)
+                .stream()
+                .map(BookingMapper::mapToBookingAllFieldsDto)
+                .collect(Collectors.toList());
+    }
+
+    @PatchMapping("/{bookingId}")
+    public BookingAllFieldsDto updateAvailableStatus(@PathVariable long bookingId,
+                                                     @RequestParam(required = false) Boolean approved,
+                                                     @RequestHeader(USER_ID_HEADER) long userId) {
+        Booking booking = bookingService.updateAvailableStatus(bookingId, approved, userId);
         return BookingMapper.mapToBookingAllFieldsDto(booking);
     }
 
-    @PatchMapping
-    public BookingAllFieldsDto updateBooking(@RequestBody BookingAllFieldsDto bookingAllFieldsDto,
-                                             @RequestHeader(USER_ID_HEADER) long userId,
-                                             @PathVariable long itemId) {
-        Booking booking = bookingService.update(BookingMapper.mapToBooking(bookingAllFieldsDto), userId, itemId);
+    @GetMapping("/{bookingId}")
+    public BookingAllFieldsDto findBookingByUserOwner(@PathVariable long bookingId,
+                                                      @RequestHeader(value = USER_ID_HEADER) long userId) {
+        Booking booking = bookingService.findAllBookingsByUserId(bookingId, userId);
+
         return BookingMapper.mapToBookingAllFieldsDto(booking);
+    }
+
+    @GetMapping("/owner")
+    public Collection<BookingAllFieldsDto> findOwnerBookings(@RequestHeader(USER_ID_HEADER) long userId,
+                                                             @ValuesAllowedConstraint(propName = "state",
+                                                                     values = {"all",
+                                                                             "current",
+                                                                             "past",
+                                                                             "future",
+                                                                             "waiting",
+                                                                             "rejected"})
+                                                             @RequestParam(defaultValue = "all") String state) {
+        return bookingService.findOwnerBookings(userId, state)
+                .stream()
+                .map(BookingMapper::mapToBookingAllFieldsDto)
+                .collect(Collectors.toList());
     }
 }

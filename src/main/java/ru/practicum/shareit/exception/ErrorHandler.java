@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.Map;
+
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
@@ -19,8 +23,8 @@ public class ErrorHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class})
-    public ErrorResponse catchMethodNotValidException(Throwable e) {
+    @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class, ConstraintViolationException.class})
+    public ErrorResponse catchValidationException(Throwable e) {
         log.debug("Получен статус 400 Bad request {}", e.getMessage(), e);
         return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
@@ -35,6 +39,13 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
     public ErrorResponse catchRawException(Throwable e) {
+        log.debug("Получен статус 500 Internal server error {}", e.getMessage(), e);
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler
+    public ErrorResponse catchNotAvailableException(NotAvailableException e) {
         log.debug("Получен статус 500 Internal server error {}", e.getMessage(), e);
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
     }
