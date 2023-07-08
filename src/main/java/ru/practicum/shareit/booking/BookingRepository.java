@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.booking.enums.BookingTimeState;
+import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
@@ -65,7 +65,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "join fetch b.item " +
             "where b.booker = :user " +
             "   and b.status = :status ")
-    List<Booking> findByBookerAndStatus(@Param("user") User booker, @Param("status") BookingTimeState status, Sort start);
+    List<Booking> findByBookerAndStatus(@Param("user") User booker, @Param("status") Status status, Sort start);
 
     @Query("select b " +
             "from Booking b " +
@@ -105,7 +105,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "join fetch b.item i " +
             "where i.owner = :user " +
             "   and b.status = :status ")
-    List<Booking> findByItemOwnerAndStatus(@Param("user") User itemOwner, @Param("status") BookingTimeState status, Sort start);
+    List<Booking> findByItemOwnerAndStatus(@Param("user") User itemOwner, @Param("status") Status status, Sort start);
 
-
+    @Query("select b " +
+            "from Booking b " +
+            "join fetch b.item i " +
+            "where i.id = :bookingId " +
+            "   and i.owner.id = :ownerId " +
+            "order by b.start")
+    List<Booking> findBookingsByItemId(long bookingId, long ownerId);
 }

@@ -1,8 +1,10 @@
 package ru.practicum.shareit.item.mapper;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.dto.FindItemByIdDto;
+import ru.practicum.shareit.item.dto.ItemDto;
 
 @UtilityClass
 public class ItemMapper {
@@ -23,5 +25,16 @@ public class ItemMapper {
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .build();
+    }
+
+    public FindItemByIdDto mapToFindByItemDto(Item item, BookingDto lastBooking, BookingDto nextBooking) {
+        return new FindItemByIdDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getAvailable(),
+                lastBooking,
+                nextBooking
+        );
     }
 }

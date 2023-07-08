@@ -17,3 +17,5 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "OR UPPER(item.description) LIKE UPPER(CONCAT('%', ?1, '%')))")
     Collection<Item> findItemsByText(String text);
 }
+
+

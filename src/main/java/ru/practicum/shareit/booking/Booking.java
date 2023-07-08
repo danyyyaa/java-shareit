@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.booking.enums.BookingState;
+import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 
@@ -38,5 +38,5 @@ public class Booking {
     private User booker;
 
     @Enumerated(EnumType.STRING)
-    private BookingState status;
+    private Status status;
 }

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingAllFieldsDto;
 import ru.practicum.shareit.booking.dto.BookingSavingDto;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.util.Constant.USER_ID_HEADER;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
@@ -41,7 +43,8 @@ public class BookingController {
                                                                                    "past",
                                                                                    "future",
                                                                                    "waiting",
-                                                                                   "rejected"})
+                                                                                   "rejected"},
+                                                                           message = "Unknown state: UNSUPPORTED_STATUS")
                                                                    @RequestParam(defaultValue = "all") String state) {
         return bookingService.findByUserId(userId, state)
                 .stream()
@@ -73,7 +76,8 @@ public class BookingController {
                                                                              "past",
                                                                              "future",
                                                                              "waiting",
-                                                                             "rejected"})
+                                                                             "rejected"},
+                                                                     message = "Unknown state: UNSUPPORTED_STATUS")
                                                              @RequestParam(defaultValue = "all") String state) {
         return bookingService.findOwnerBookings(userId, state)
                 .stream()

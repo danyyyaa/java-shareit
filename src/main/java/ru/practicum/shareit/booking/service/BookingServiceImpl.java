@@ -1,11 +1,12 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.enums.BookingTimeState;
+import ru.practicum.shareit.booking.enums.State;
+import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.Item;
@@ -19,10 +20,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static ru.practicum.shareit.booking.enums.BookingState.*;
+import static ru.practicum.shareit.booking.enums.Status.*;
+import static ru.practicum.shareit.util.Constant.SORT_BY_START_DATE_DESC;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
@@ -38,7 +41,7 @@ public class BookingServiceImpl implements BookingService {
 
         if (item.getOwner().getId().equals(bookerId)) {
             throw new NotFoundException(String.format(
-                    "Вещь с id %s не может быть забронирована ее владельцем", bookerId));
+                    "Вещь %s не может быть забронирована ее владельцем", bookerId));
         }
 
         if (Boolean.FALSE.equals(item.getAvailable())) {
@@ -68,40 +71,41 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<Booking> findByUserId(long userId, String stateString) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException(String.format("Пользователь %s не найден.", userId))
         );
 
-        BookingTimeState state;
+        State state;
 
-        state = BookingTimeState.valueOf(stateString.toUpperCase());
+        state = State.valueOf(stateString.toUpperCase());
         LocalDateTime currentMoment = LocalDateTime.now();
         List<Booking> bookings;
 
         switch (state) {
             case ALL:
-                bookings = bookingRepository.findByBooker(user, Sort.by(Sort.Direction.DESC, "start"));
+                bookings = bookingRepository.findByBooker(user, SORT_BY_START_DATE_DESC);
                 break;
             case CURRENT:
                 bookings = bookingRepository.findByBookerCurrent(
-                        user, currentMoment, Sort.by(Sort.Direction.DESC, "start"));
+                        user, currentMoment, SORT_BY_START_DATE_DESC);
                 break;
             case PAST:
                 bookings = bookingRepository.findByBookerPast(
-                        user, currentMoment, Sort.by(Sort.Direction.DESC, "start"));
+                        user, currentMoment, SORT_BY_START_DATE_DESC);
                 break;
             case FUTURE:
                 bookings = bookingRepository.findByBookerFuture(
-                        user, currentMoment, Sort.by(Sort.Direction.DESC, "start"));
+                        user, currentMoment, SORT_BY_START_DATE_DESC);
                 break;
             case WAITING:
                 bookings = bookingRepository.findByBookerAndStatus(
-                        user, BookingTimeState.WAITING, Sort.by(Sort.Direction.DESC, "start"));
+                        user, Status.WAITING, SORT_BY_START_DATE_DESC);
                 break;
             case REJECTED:
                 bookings = bookingRepository.findByBookerAndStatus(
-                        user, BookingTimeState.REJECTED, Sort.by(Sort.Direction.DESC, "start"));
+                        user, Status.REJECTED, SORT_BY_START_DATE_DESC);
                 break;
             default:
                 bookings = Collections.emptyList();
@@ -146,41 +150,42 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<Booking> findOwnerBookings(long userId, String stateString) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Пользователь не найден")
         );
 
-        BookingTimeState state;
+        State state;
 
-        state = BookingTimeState.valueOf(stateString.toUpperCase());
+        state = State.valueOf(stateString.toUpperCase());
         LocalDateTime currentMoment = LocalDateTime.now();
         List<Booking> bookings;
 
         switch (state) {
             case ALL:
                 bookings = bookingRepository.findByItemOwner(
-                        user, Sort.by(Sort.Direction.DESC, "start"));
+                        user, SORT_BY_START_DATE_DESC);
                 break;
             case CURRENT:
                 bookings = bookingRepository.findByItemOwnerCurrent(
-                        user, currentMoment, Sort.by(Sort.Direction.DESC, "start"));
+                        user, currentMoment, SORT_BY_START_DATE_DESC);
                 break;
             case PAST:
                 bookings = bookingRepository.findByItemOwnerPast(
-                        user, currentMoment, Sort.by(Sort.Direction.DESC, "start"));
+                        user, currentMoment, SORT_BY_START_DATE_DESC);
                 break;
             case FUTURE:
                 bookings = bookingRepository.findByItemOwnerFuture(
-                        user, currentMoment, Sort.by(Sort.Direction.DESC, "start"));
+                        user, currentMoment, SORT_BY_START_DATE_DESC);
                 break;
             case WAITING:
                 bookings = bookingRepository.findByItemOwnerAndStatus(
-                        user, BookingTimeState.WAITING, Sort.by(Sort.Direction.DESC, "start"));
+                        user, Status.WAITING, SORT_BY_START_DATE_DESC);
                 break;
             case REJECTED:
                 bookings = bookingRepository.findByItemOwnerAndStatus(
-                        user, BookingTimeState.REJECTED, Sort.by(Sort.Direction.DESC, "start"));
+                        user, Status.REJECTED, SORT_BY_START_DATE_DESC);
                 break;
             default:
                 bookings = Collections.emptyList();

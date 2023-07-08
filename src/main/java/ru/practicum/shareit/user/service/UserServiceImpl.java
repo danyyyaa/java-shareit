@@ -7,11 +7,13 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
+import org.springframework.transaction.annotation.Transactional;
 import javax.validation.ConstraintViolationException;
 import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -45,12 +47,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User findById(long id) {
         return userRepository.findById(id).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", id)));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<User> findAll() {
         return userRepository.findAll();
     }
