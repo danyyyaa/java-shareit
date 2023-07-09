@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingAllFieldsDto;
@@ -18,6 +19,7 @@ import static ru.practicum.shareit.util.Constant.USER_ID_HEADER;
 @Validated
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping(path = "/bookings")
 public class BookingController {
 
@@ -26,6 +28,7 @@ public class BookingController {
     @PostMapping
     public BookingAllFieldsDto saveBooking(@Valid @RequestBody BookingSavingDto bookingSavingDto,
                                            @RequestHeader(USER_ID_HEADER) long userId) {
+        log.info("Получена сущность: {}", bookingSavingDto);
         Booking booking = bookingService.save(
                 bookingSavingDto.getItemId(),
                 bookingSavingDto.getStart(),
@@ -46,6 +49,7 @@ public class BookingController {
                                                                                    "rejected"},
                                                                            message = "Unknown state: UNSUPPORTED_STATUS")
                                                                    @RequestParam(defaultValue = "all") String state) {
+        log.info("Получен запрос на получение всех бронирований пользователя {}", userId);
         return bookingService.findByUserId(userId, state)
                 .stream()
                 .map(BookingMapper::mapToBookingAllFieldsDto)
@@ -56,6 +60,7 @@ public class BookingController {
     public BookingAllFieldsDto updateAvailableStatus(@PathVariable long bookingId,
                                                      @RequestParam(required = false) Boolean approved,
                                                      @RequestHeader(USER_ID_HEADER) long userId) {
+        log.info("Получен запрос на обновление статуса бронирования {}", bookingId);
         Booking booking = bookingService.updateAvailableStatus(bookingId, approved, userId);
         return BookingMapper.mapToBookingAllFieldsDto(booking);
     }
@@ -63,6 +68,7 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public BookingAllFieldsDto findBookingByUserOwner(@PathVariable long bookingId,
                                                       @RequestHeader(value = USER_ID_HEADER) long userId) {
+        log.info("Получен запрос на получение бронирования {}", bookingId);
         Booking booking = bookingService.findAllBookingsByUserId(bookingId, userId);
 
         return BookingMapper.mapToBookingAllFieldsDto(booking);
@@ -79,6 +85,7 @@ public class BookingController {
                                                                              "rejected"},
                                                                      message = "Unknown state: UNSUPPORTED_STATUS")
                                                              @RequestParam(defaultValue = "all") String state) {
+        log.info("Получен запрос на получение всех бронирований пользователя {}", userId);
         return bookingService.findOwnerBookings(userId, state)
                 .stream()
                 .map(BookingMapper::mapToBookingAllFieldsDto)
