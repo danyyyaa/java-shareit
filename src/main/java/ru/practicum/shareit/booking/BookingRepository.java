@@ -110,8 +110,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b " +
             "from Booking b " +
             "join fetch b.item i " +
-            "where i.id = :bookingId " +
-            "   and i.owner.id = :ownerId " +
+            "where i.id = :itemId " +
+            "   and i.owner.id = :ownerId" +
+            "   and b.status = :status " +
             "order by b.start")
-    List<Booking> findBookingsByItemId(long bookingId, long ownerId);
+    List<Booking> findBookingsByItemId(long itemId, long ownerId, Status status);
+
+    List<Booking> findBookingByItemIdAndStatusNotInAndStartBefore(
+            Long itemId, List<Status> statuses, LocalDateTime start);
 }
