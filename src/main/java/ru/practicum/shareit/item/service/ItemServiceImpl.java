@@ -11,6 +11,7 @@ import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.item.CommentRepository;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemAllFieldsDto;
@@ -113,6 +114,26 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
+    public Collection<ItemAllFieldsDto> searchByText(String text, long userId) {
+        if (text.isBlank()) {
+            return Collections.emptyList();
+        }
+
+        List<Item> items = itemRepository.findItemsByText(text);
+
+        if (items.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return items.stream()
+                .map(item -> findById(item.getOwner().getId(), item.getId()))
+                .collect(Collectors.toList());
+
+        //return itemRepository.findItemsByText(text);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Collection<ItemAllFieldsDto> findItemsByUserId(long userId) {
         List<Item> items = itemRepository.findAllByOwnerId(userId);
         return items
@@ -135,7 +156,7 @@ public class ItemServiceImpl implements ItemService {
                 new NotFoundException(String.format("Item %s не найден.", itemId)));
 
         if (bookingRepository.findByBooker(user, Sort.unsorted()).isEmpty()) {
-            throw new ValidationException("Пользователь не может оставить комментарий.");
+            throw new ValidationException(String.format("У пользователя %s нету бронирований", user.getId()));
         }
 
         List<Booking> bookings = bookingRepository.findBookingByItemIdAndStatusNotInAndStartBefore(itemId,
@@ -154,16 +175,6 @@ public class ItemServiceImpl implements ItemService {
         Comment savedComment = commentRepository.save(comment);
 
         return CommentMapper.mapToCommentResponseDto(savedComment);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Collection<Item> searchByText(String text, long userId) {
-        if (text.isBlank()) {
-            return Collections.emptyList();
-        }
-
-        return itemRepository.findItemsByText(text);
     }
 
     private Optional<Booking> getNextItem(List<Booking> bookings) {

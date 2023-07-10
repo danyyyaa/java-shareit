@@ -57,13 +57,13 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> searchByText(@RequestParam(name = "text") String text,
+    public Collection<ItemAllFieldsDto> searchByText(@RequestParam(name = "text") String text,
                                             @RequestHeader(USER_ID_HEADER) long userId) {
         log.info("Получен запрос на поиск предметов по тексту: {}", text);
-        return itemService.searchByText(text, userId)
-                .stream()
+        return itemService.searchByText(text, userId);
+                /*.stream()
                 .map(ItemMapper::mapToItemDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())*/
     }
 
     @PostMapping("/{itemId}/comment")

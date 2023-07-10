@@ -15,6 +15,8 @@ public class Constant {
 
     public static final String ERROR_RESPONSE = "error";
 
+    public static final String TIME_PATTERN = "YYYY-MM-DDTHH:mm:ss";
+
     public static final Comparator<Booking> orderByStartDateAsc = (a, b) -> {
         if (a.getStart().isAfter(b.getStart())) {
             return 1;

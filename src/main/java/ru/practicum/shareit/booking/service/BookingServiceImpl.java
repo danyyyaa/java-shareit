@@ -44,16 +44,16 @@ public class BookingServiceImpl implements BookingService {
                     "Вещь %s не может быть забронирована ее владельцем", bookerId));
         }
 
-        if (Boolean.FALSE.equals(item.getAvailable())) {
+        if (!item.getAvailable()) {
             throw new ValidationException("Вещь должна быть доступна для бронирования");
         }
 
         if (end.isBefore(LocalDateTime.now()) || start.equals(end)) {
-            throw new ValidationException("Ошибка валидации.");
+            throw new ValidationException("Время начала бронирования не может совпадать со временем его окончания");
         }
 
         if (end.isBefore(start)) {
-            throw new ValidationException("Ошибка валидации.");
+            throw new ValidationException("Время окончания бронирования не может быть раньше времени его начала");
         }
 
         User booker = userRepository.findById(bookerId).orElseThrow(() ->
@@ -127,7 +127,7 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Бронирование не может быть обновлено.");
         }
 
-        booking.setStatus(Boolean.TRUE.equals(state) ? APPROVED : REJECTED);
+        booking.setStatus(state ? APPROVED : REJECTED);
 
         return bookingRepository.save(booking);
     }
@@ -135,15 +135,15 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking findAllBookingsByUserId(long bookingId, long userId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
-                new NotFoundException(String.format("Пользователь %d не найден.", userId)));
+                new NotFoundException(
+                        String.format("У пользователя %s бронирование %s не найдено.", userId, bookingId)));
 
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException("Пользователь не найден")
-        );
+                new NotFoundException(String.format("Пользователь %s не найден.", userId)));
 
         if (!Objects.equals(booking.getBooker().getId(), user.getId())
                 && !Objects.equals(booking.getItem().getOwner().getId(), user.getId())) {
-            throw new NotFoundException("Бронирование не найдено");
+            throw new NotFoundException(String.format("Бронирование %s не найдено", booking.getId()));
         }
 
         return booking;
@@ -153,7 +153,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(readOnly = true)
     public Collection<Booking> findOwnerBookings(long userId, String stateString) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException("Пользователь не найден")
+                () -> new NotFoundException(String.format("Пользователь %s не найден.", userId))
         );
 
         State state;
