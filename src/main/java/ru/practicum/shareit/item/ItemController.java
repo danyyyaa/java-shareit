@@ -15,7 +15,6 @@ import ru.practicum.shareit.validation.Create;
 import ru.practicum.shareit.validation.Update;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.util.Constant.USER_ID_HEADER;
 
