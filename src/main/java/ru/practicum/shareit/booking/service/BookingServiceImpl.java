@@ -27,11 +27,8 @@ import static ru.practicum.shareit.util.Constant.SORT_BY_START_DATE_DESC;
 @RequiredArgsConstructor
 @Transactional
 public class BookingServiceImpl implements BookingService {
-
     private final BookingRepository bookingRepository;
-
     private final ItemRepository itemRepository;
-
     private final UserRepository userRepository;
 
     @Override
@@ -117,6 +114,9 @@ public class BookingServiceImpl implements BookingService {
     public Booking updateAvailableStatus(long bookingId, Boolean state, long userId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(
                 () -> new NotFoundException(String.format("Бронирование %s не найдено.", bookingId)));
+
+        userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException(String.format("Пользователь %s не найден", userId)));
 
         if (booking.getBooker().getId().equals(userId)) {
             throw new NotFoundException(String.format("Нет доступных бронирований у пользователя %s.", userId));

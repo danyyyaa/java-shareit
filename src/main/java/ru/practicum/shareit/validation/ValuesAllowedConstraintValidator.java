@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ValuesAllowedConstraintValidator implements ConstraintValidator<ValuesAllowedConstraint, String> {
-
     private String propName;
     private String message;
     private List<String> allowable;

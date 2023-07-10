@@ -12,7 +12,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "items")
 public class Item {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -26,7 +25,7 @@ public class Item {
     @Column(name = "available")
     private Boolean available;
 
-    @ManyToOne//(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private User owner;
 }

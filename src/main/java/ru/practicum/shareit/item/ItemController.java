@@ -12,6 +12,7 @@ import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.validation.Create;
+import ru.practicum.shareit.validation.Update;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -23,7 +24,6 @@ import static ru.practicum.shareit.util.Constant.USER_ID_HEADER;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemController {
-
     private final ItemService itemService;
 
     @PostMapping
@@ -35,7 +35,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestBody ItemDto itemDto,
+    public ItemDto updateItem(@Validated(Update.class) @RequestBody ItemDto itemDto,
                               @RequestHeader(USER_ID_HEADER) long userId,
                               @PathVariable long itemId) {
         log.info("Получен запрос на обновления предмета {}", itemId);

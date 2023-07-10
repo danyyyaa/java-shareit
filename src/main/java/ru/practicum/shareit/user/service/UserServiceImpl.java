@@ -16,7 +16,6 @@ import java.util.Collection;
 @RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userRepository;
 
     @Override

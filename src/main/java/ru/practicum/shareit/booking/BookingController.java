@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.dto.BookingAllFieldsDto;
 import ru.practicum.shareit.booking.dto.BookingSavingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.validation.Create;
 import ru.practicum.shareit.validation.ValuesAllowedConstraint;
 
 import javax.validation.Valid;
@@ -22,13 +23,13 @@ import static ru.practicum.shareit.util.Constant.USER_ID_HEADER;
 @Slf4j
 @RequestMapping(path = "/bookings")
 public class BookingController {
-
     private final BookingService bookingService;
 
     @PostMapping
     public BookingAllFieldsDto saveBooking(@Valid @RequestBody BookingSavingDto bookingSavingDto,
                                            @RequestHeader(USER_ID_HEADER) long userId) {
         log.info("Получена сущность: {}", bookingSavingDto);
+
         Booking booking = bookingService.save(
                 bookingSavingDto.getItemId(),
                 bookingSavingDto.getStart(),

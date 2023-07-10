@@ -8,13 +8,9 @@ import java.util.Comparator;
 
 @UtilityClass
 public class Constant {
-
     public static final String USER_ID_HEADER = "X-Sharer-User-Id";
-
     public static final Sort SORT_BY_START_DATE_DESC = Sort.by(Sort.Direction.DESC, "start");
-
     public static final String ERROR_RESPONSE = "error";
-
     public static final String TIME_PATTERN = "YYYY-MM-DDTHH:mm:ss";
 
     public static final Comparator<Booking> orderByStartDateAsc = (a, b) -> {

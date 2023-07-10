@@ -10,7 +10,6 @@ import java.util.List;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
-
     List<Item> findAllByOwnerId(long ownerId);
 
     @Query(value = "SELECT item FROM Item item " +

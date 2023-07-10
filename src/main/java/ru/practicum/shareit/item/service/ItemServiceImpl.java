@@ -23,10 +23,7 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.util.Constant.orderByStartDateAsc;
@@ -36,13 +33,9 @@ import static ru.practicum.shareit.util.Constant.orderByStartDateDesc;
 @RequiredArgsConstructor
 @Transactional
 public class ItemServiceImpl implements ItemService {
-
     private final ItemRepository itemRepository;
-
     private final UserRepository userRepository;
-
     private final BookingRepository bookingRepository;
-
     private final CommentRepository commentRepository;
 
     @Override
@@ -120,26 +113,14 @@ public class ItemServiceImpl implements ItemService {
         }
 
         List<Item> items = itemRepository.findItemsByText(text);
-
-        if (items.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        return items.stream()
-                .map(item -> findById(item.getOwner().getId(), item.getId()))
-                .collect(Collectors.toList());
-
-        //return itemRepository.findItemsByText(text);
+        return findItemsDto(items);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Collection<ItemAllFieldsDto> findItemsByUserId(long userId) {
         List<Item> items = itemRepository.findAllByOwnerId(userId);
-        return items
-                .stream()
-                .map(item -> findById(userId, item.getId()))
-                .collect(Collectors.toList());
+        return findItemsDto(items);
     }
 
     @Override
@@ -175,6 +156,45 @@ public class ItemServiceImpl implements ItemService {
         Comment savedComment = commentRepository.save(comment);
 
         return CommentMapper.mapToCommentResponseDto(savedComment);
+    }
+
+    private Collection<ItemAllFieldsDto> findItemsDto(List<Item> items) {
+        if (items.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Long> itemIds = items.stream()
+                .map(Item::getId)
+                .collect(Collectors.toList());
+
+        List<Comment> comments = commentRepository.findCommentsByItemIdInOrderByCreated(itemIds);
+
+        Map<Long, List<Comment>> commentsMap = comments.stream()
+                .collect(Collectors.groupingBy(comment -> comment.getItem().getId()));
+
+        List<Booking> bookings = bookingRepository.findBookingsByItemIdIn(itemIds);
+
+        Map<Long, List<Booking>> bookingsMap = bookings.stream()
+                .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
+
+        return items.stream()
+                .map(item -> {
+                    List<CommentResponseDto> itemComments = commentsMap.getOrDefault(
+                                    item.getId(), Collections.emptyList())
+                            .stream()
+                            .map(CommentMapper::mapToCommentResponseDto)
+                            .collect(Collectors.toList());
+
+                    List<Booking> itemBookings = bookingsMap.getOrDefault(item.getId(), Collections.emptyList());
+                    Optional<Booking> lastOptional = getLastItem(itemBookings);
+                    Optional<Booking> nextOptional = getNextItem(itemBookings);
+
+                    BookingDto last = lastOptional.map(BookingMapper::mapFromBookingToBookingDto).orElse(null);
+                    BookingDto next = nextOptional.map(BookingMapper::mapFromBookingToBookingDto).orElse(null);
+
+                    return ItemMapper.mapToItemAllFieldsDto(item, last, next, itemComments);
+                })
+                .collect(Collectors.toList());
     }
 
     private Optional<Booking> getNextItem(List<Booking> bookings) {

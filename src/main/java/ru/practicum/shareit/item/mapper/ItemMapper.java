@@ -11,7 +11,6 @@ import java.util.List;
 
 @UtilityClass
 public class ItemMapper {
-
     public Item mapToItem(ItemDto itemDto) {
         return Item.builder()
                 .id(itemDto.getId())

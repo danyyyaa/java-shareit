@@ -6,7 +6,6 @@ import ru.practicum.shareit.item.model.Comment;
 
 @UtilityClass
 public class CommentMapper {
-
     public CommentResponseDto mapToCommentResponseDto(Comment comment) {
         return CommentResponseDto.builder()
                 .id(comment.getId())
