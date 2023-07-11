@@ -60,9 +60,6 @@ public class ItemController {
                                             @RequestHeader(USER_ID_HEADER) long userId) {
         log.info("Получен запрос на поиск предметов по тексту: {}", text);
         return itemService.searchByText(text, userId);
-                /*.stream()
-                .map(ItemMapper::mapToItemDto)
-                .collect(Collectors.toList())*/
     }
 
     @PostMapping("/{itemId}/comment")

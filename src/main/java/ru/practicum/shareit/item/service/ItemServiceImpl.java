@@ -79,30 +79,63 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new NotFoundException(String.format("Item %s не найден.", itemId)));
 
-        List<Booking> bookings = bookingRepository.findBookingsByItemId(itemId, userId, Status.APPROVED);
+        return findItemsDto(Collections.singletonList(item), userId).get(0);
+    }
 
-        Optional<Booking> lastOptional = getLastItem(bookings);
-        Optional<Booking> nextOptional = getNextItem(bookings);
-
-        List<CommentResponseDto> comments = commentRepository.findCommentByItem_IdIsOrderByCreated(itemId)
-                .stream()
-                .map(CommentMapper::mapToCommentResponseDto)
-                .collect(Collectors.toList());
-
-        if (lastOptional.isEmpty() && nextOptional.isEmpty()) {
-            return ItemMapper.mapToItemAllFieldsDto(item, null, null, comments);
-        } else if (lastOptional.isPresent() && nextOptional.isEmpty()) {
-            BookingDto last = BookingMapper.mapFromBookingToBookingDto(lastOptional.get());
-            return ItemMapper.mapToItemAllFieldsDto(item, last, null, comments);
-        } else if (lastOptional.isEmpty()) {
-            BookingDto next = BookingMapper.mapFromBookingToBookingDto(nextOptional.get());
-            return ItemMapper.mapToItemAllFieldsDto(item, null, next, comments);
+    private List<ItemAllFieldsDto> findItemsDto(List<Item> items, long userId) {
+        if (items.isEmpty()) {
+            return Collections.emptyList();
         }
 
-        BookingDto last = BookingMapper.mapFromBookingToBookingDto(lastOptional.get());
-        BookingDto next = BookingMapper.mapFromBookingToBookingDto(nextOptional.get());
+        List<Long> itemIds = items.stream()
+                .map(Item::getId)
+                .collect(Collectors.toList());
 
-        return ItemMapper.mapToItemAllFieldsDto(item, last, next, comments);
+        List<Comment> comments = commentRepository.findCommentsByItemIdInOrderByCreated(itemIds);
+
+        Map<Long, List<Comment>> commentsMap = comments.stream()
+                .collect(Collectors.groupingBy(comment -> comment.getItem().getId()));
+
+        List<Booking> bookings;
+
+        if (items.size() == 1) {
+            bookings = bookingRepository.findBookingsByItemId(items.get(0).getId(), userId, Status.APPROVED);
+        } else {
+            bookings = bookingRepository.findBookingsByItemIdIn(itemIds);
+        }
+
+        Map<Long, List<Booking>> bookingsMap = bookings.stream()
+                .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
+
+        return items.stream()
+                .map(item -> {
+                    List<CommentResponseDto> itemComments = commentsMap.getOrDefault(
+                                    item.getId(), Collections.emptyList())
+                            .stream()
+                            .map(CommentMapper::mapToCommentResponseDto)
+                            .collect(Collectors.toList());
+
+                    List<Booking> itemBookings = bookingsMap.getOrDefault(item.getId(), Collections.emptyList());
+
+                    Optional<Booking> lastOptional = getLastItem(itemBookings);
+                    Optional<Booking> nextOptional = getNextItem(itemBookings);
+
+                    if (lastOptional.isEmpty() && nextOptional.isEmpty()) {
+                        return ItemMapper.mapToItemAllFieldsDto(item, null, null, itemComments);
+                    } else if (lastOptional.isPresent() && nextOptional.isEmpty()) {
+                        BookingDto last = BookingMapper.mapFromBookingToBookingDto(lastOptional.get());
+                        return ItemMapper.mapToItemAllFieldsDto(item, last, null, itemComments);
+                    } else if (lastOptional.isEmpty()) {
+                        BookingDto next = BookingMapper.mapFromBookingToBookingDto(nextOptional.get());
+                        return ItemMapper.mapToItemAllFieldsDto(item, null, next, itemComments);
+                    }
+
+                    BookingDto last = BookingMapper.mapFromBookingToBookingDto(lastOptional.get());
+                    BookingDto next = BookingMapper.mapFromBookingToBookingDto(nextOptional.get());
+
+                    return ItemMapper.mapToItemAllFieldsDto(item, last, next, itemComments);
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -113,14 +146,14 @@ public class ItemServiceImpl implements ItemService {
         }
 
         List<Item> items = itemRepository.findItemsByText(text);
-        return findItemsDto(items);
+        return findItemsDto(items, userId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Collection<ItemAllFieldsDto> findItemsByUserId(long userId) {
         List<Item> items = itemRepository.findAllByOwnerId(userId);
-        return findItemsDto(items);
+        return findItemsDto(items, userId);
     }
 
     @Override
@@ -156,45 +189,6 @@ public class ItemServiceImpl implements ItemService {
         Comment savedComment = commentRepository.save(comment);
 
         return CommentMapper.mapToCommentResponseDto(savedComment);
-    }
-
-    private Collection<ItemAllFieldsDto> findItemsDto(List<Item> items) {
-        if (items.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<Long> itemIds = items.stream()
-                .map(Item::getId)
-                .collect(Collectors.toList());
-
-        List<Comment> comments = commentRepository.findCommentsByItemIdInOrderByCreated(itemIds);
-
-        Map<Long, List<Comment>> commentsMap = comments.stream()
-                .collect(Collectors.groupingBy(comment -> comment.getItem().getId()));
-
-        List<Booking> bookings = bookingRepository.findBookingsByItemIdIn(itemIds);
-
-        Map<Long, List<Booking>> bookingsMap = bookings.stream()
-                .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
-
-        return items.stream()
-                .map(item -> {
-                    List<CommentResponseDto> itemComments = commentsMap.getOrDefault(
-                                    item.getId(), Collections.emptyList())
-                            .stream()
-                            .map(CommentMapper::mapToCommentResponseDto)
-                            .collect(Collectors.toList());
-
-                    List<Booking> itemBookings = bookingsMap.getOrDefault(item.getId(), Collections.emptyList());
-                    Optional<Booking> lastOptional = getLastItem(itemBookings);
-                    Optional<Booking> nextOptional = getNextItem(itemBookings);
-
-                    BookingDto last = lastOptional.map(BookingMapper::mapFromBookingToBookingDto).orElse(null);
-                    BookingDto next = nextOptional.map(BookingMapper::mapFromBookingToBookingDto).orElse(null);
-
-                    return ItemMapper.mapToItemAllFieldsDto(item, last, next, itemComments);
-                })
-                .collect(Collectors.toList());
     }
 
     private Optional<Booking> getNextItem(List<Booking> bookings) {
