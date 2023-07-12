@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         }
 
         try {
-            return userRepository.save(updatedUser);
+            return userRepository.saveAndFlush(updatedUser);
         } catch (DataIntegrityViolationException e) {
             throw new AlreadyExistsException(String.format(
                     "Пользователь с %s уже зарегистрирован", updatedUser.getEmail()
