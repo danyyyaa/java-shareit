@@ -11,7 +11,7 @@ import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.marker.Create;
-import ru.practicum.shareit.marker.ToLog;
+import ru.practicum.shareit.aspect.ToLog;
 import ru.practicum.shareit.marker.Update;
 
 import java.util.Collection;

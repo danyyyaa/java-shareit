@@ -83,7 +83,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private List<ItemAllFieldsDto> findItemsDto(List<Item> items, long userId) {
-        if (items.isEmpty()) {
+        if (items == null || items.isEmpty()) {
             return Collections.emptyList();
         }
 

@@ -12,7 +12,7 @@ import java.util.Arrays;
 @Component
 @Slf4j
 public class LoggingAspect {
-    @Around("@within(ru.practicum.shareit.marker.ToLog)")
+    @Around("@within(ru.practicum.shareit.aspect.ToLog)")
     public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().getName();
         Object[] arguments = joinPoint.getArgs();

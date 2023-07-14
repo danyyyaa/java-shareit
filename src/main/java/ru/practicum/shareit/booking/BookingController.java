@@ -7,7 +7,7 @@ import ru.practicum.shareit.booking.dto.BookingAllFieldsDto;
 import ru.practicum.shareit.booking.dto.BookingSavingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.marker.ToLog;
+import ru.practicum.shareit.aspect.ToLog;
 import ru.practicum.shareit.validation.ValuesAllowedConstraint;
 
 import javax.validation.Valid;

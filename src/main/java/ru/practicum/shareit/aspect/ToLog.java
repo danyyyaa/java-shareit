@@ -1,4 +1,4 @@
-package ru.practicum.shareit.marker;
+package ru.practicum.shareit.aspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
