@@ -18,10 +18,7 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -99,16 +96,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private List<ItemRequestResponseDto> mapToDto(Map<ItemRequest, List<Item>> map) {
         return map.entrySet().stream()
                 .map(entry -> {
-                    if (entry.getValue() == null) {
-                        return ItemRequestsMapper
-                                .mapToItemRequestResponseDtoWithItemId(entry.getKey(), Collections.emptyList());
-                    }
-                    List<ItemGetOwnItemRequestDto> itemDtos = entry.getValue()
+                    List<ItemGetOwnItemRequestDto> itemDtos = Optional.ofNullable(entry.getValue())
+                            .orElse(Collections.emptyList())
                             .stream()
                             .map(ItemMapper::mapFromItemToItemGetOwnItemRequestDto)
                             .collect(Collectors.toList());
-                    return ItemRequestsMapper
-                            .mapToItemRequestResponseDtoWithItemId(entry.getKey(), itemDtos);
+                    return ItemRequestsMapper.mapToItemRequestResponseDtoWithItemId(entry.getKey(), itemDtos);
                 })
                 .collect(Collectors.toList());
     }

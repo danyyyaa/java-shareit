@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.enums.Status;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
@@ -124,15 +125,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b " +
             "from Booking b " +
             "join fetch b.item i " +
-            "where i.id = :itemId " +
+            "where i = :items " +
             "   and i.owner.id = :ownerId" +
             "   and b.status = :status " +
             "order by b.start")
-    List<Booking> findBookingsByItemId(@Param("itemId") long itemId,
+    List<Booking> findBookingsByItemId(@Param("items") List<Item> items,
                                        @Param("ownerId") long ownerId, Status status);
 
     List<Booking> findBookingByItemIdAndStatusNotInAndStartBefore(
             long itemId, List<Status> statuses, LocalDateTime start);
 
-    List<Booking> findBookingsByItemIdIn(List<Long> itemIds);
+    List<Booking> findBookingsByItemIn(List<Item> items);
 }
