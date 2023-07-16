@@ -2,10 +2,13 @@ package ru.practicum.shareit.item.mapper;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.dto.CommentResponseDto;
+import ru.practicum.shareit.item.dto.ItemAllFieldsDto;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemGetOwnItemRequestDto;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.List;
+import java.util.Collection;
 
 @UtilityClass
 public class ItemMapper {
@@ -38,7 +41,7 @@ public class ItemMapper {
     }
 
     public ItemAllFieldsDto mapToItemAllFieldsDto(Item item, BookingDto lastBooking,
-                                                  BookingDto nextBooking, List<CommentResponseDto> comments) {
+                                                  BookingDto nextBooking, Collection<CommentResponseDto> comments) {
         return ItemAllFieldsDto.builder()
                 .id(item.getId())
                 .name(item.getName())

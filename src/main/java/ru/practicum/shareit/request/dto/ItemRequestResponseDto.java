@@ -6,7 +6,7 @@ import lombok.Data;
 import ru.practicum.shareit.item.dto.ItemGetOwnItemRequestDto;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Collection;
 
 @Data
 @Builder
@@ -15,5 +15,5 @@ public class ItemRequestResponseDto {
     private long id;
     private String description;
     private LocalDateTime created;
-    private List<ItemGetOwnItemRequestDto> items;
+    private Collection<ItemGetOwnItemRequestDto> items;
 }

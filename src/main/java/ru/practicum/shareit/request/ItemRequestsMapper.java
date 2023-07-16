@@ -4,12 +4,12 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.dto.ItemGetOwnItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
 
-import java.util.List;
+import java.util.Collection;
 
 @UtilityClass
 public class ItemRequestsMapper {
     public ItemRequestResponseDto mapToItemRequestResponseDtoWithItemId(ItemRequest itemRequest,
-                                                                        List<ItemGetOwnItemRequestDto> dtos) {
+                                                                        Collection<ItemGetOwnItemRequestDto> dtos) {
         return ItemRequestResponseDto.builder()
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
