@@ -57,19 +57,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 new NotFoundException(String.format("Пользователь %s не найден.", userId)));
 
         List<ItemRequest> requests = itemRequestRepository.findItemRequestsByRequestorId(requestor.getId());
-
-        List<Long> requestsId = requests.stream()
-                .map(ItemRequest::getId)
-                .collect(Collectors.toList());
-
-        Map<Long, List<Item>> itemsMap = itemRepository.findItemByItemRequestIdIn(requestsId)
-                .stream()
-                .collect(Collectors.groupingBy(item -> item.getItemRequest().getId()));
+        Map<ItemRequest, List<Item>> map = findItemsToItemRequests(requests);
 
         return requests.stream()
                 .map(itemRequest -> {
-                    List<ItemGetOwnItemRequestDto> items = itemsMap
-                            .getOrDefault(itemRequest.getId(), Collections.emptyList())
+                    List<ItemGetOwnItemRequestDto> items = map
+                            .getOrDefault(itemRequest, Collections.emptyList())
                             .stream()
                             .map(ItemMapper::mapFromItemToItemGetOwnItemRequestDto)
                             .collect(Collectors.toList());
@@ -87,28 +80,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 new NotFoundException(String.format("Пользователь %s не найден.", userId)));
 
         List<ItemRequest> requests = itemRequestRepository.findAllByRequestorIdNot(user.getId(), page);
-
-        List<Long> requestsId = requests.stream()
-                .map(ItemRequest::getId)
-                .collect(Collectors.toList());
-
-        Map<Long, List<Item>> itemsMap = itemRepository.findItemByItemRequestIdIn(requestsId)
-                .stream()
-                .filter(item -> item.getOwner().getId().equals(userId))
-                .collect(Collectors.groupingBy(item -> item.getItemRequest().getId()));
-
-        return requests.stream()
-                .map(itemRequest -> {
-                    List<ItemGetOwnItemRequestDto> items = itemsMap
-                            .getOrDefault(itemRequest.getId(), Collections.emptyList())
-                            .stream()
-                            .map(ItemMapper::mapFromItemToItemGetOwnItemRequestDto)
-                            .collect(Collectors.toList());
-
-                    return ItemRequestsMapper
-                            .mapToItemRequestResponseDtoWithItemId(itemRequest, items);
-                })
-                .collect(Collectors.toList());
+        Map<ItemRequest, List<Item>> map = findItemsToItemRequests(requests);
+        return mapToDto(map);
     }
 
     @Override
@@ -119,12 +92,36 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         ItemRequest itemRequest = itemRequestRepository.findById(requestId).orElseThrow(() ->
                 new NotFoundException(String.format("Бронирование %s не найдено.", user.getId())));
 
-        List<ItemGetOwnItemRequestDto> items = itemRepository.findItemByItemRequestIdIn(List.of(requestId))
-                .stream()
-                .map(ItemMapper::mapFromItemToItemGetOwnItemRequestDto)
+        Map<ItemRequest, List<Item>> map = findItemsToItemRequests(List.of(itemRequest));
+        return mapToDto(map).get(0);
+    }
+
+    private List<ItemRequestResponseDto> mapToDto(Map<ItemRequest, List<Item>> map) {
+        return map.entrySet().stream()
+                .map(entry -> {
+                    if (entry.getValue() == null) {
+                        return ItemRequestsMapper
+                                .mapToItemRequestResponseDtoWithItemId(entry.getKey(), Collections.emptyList());
+                    }
+                    List<ItemGetOwnItemRequestDto> itemDtos = entry.getValue()
+                            .stream()
+                            .map(ItemMapper::mapFromItemToItemGetOwnItemRequestDto)
+                            .collect(Collectors.toList());
+                    return ItemRequestsMapper
+                            .mapToItemRequestResponseDtoWithItemId(entry.getKey(), itemDtos);
+                })
                 .collect(Collectors.toList());
+    }
 
-
-        return ItemRequestsMapper.mapToItemRequestResponseDtoWithItemId(itemRequest, items);
+    private Map<ItemRequest, List<Item>> findItemsToItemRequests(List<ItemRequest> requests) {
+        return itemRepository.findItemByItemRequestIn(requests)
+                .stream()
+                .collect(Collectors.groupingBy(
+                        Item::getItemRequest,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> list != null ? list : Collections.emptyList()
+                        )
+                ));
     }
 }

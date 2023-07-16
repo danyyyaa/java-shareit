@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "OR UPPER(item.description) LIKE UPPER(CONCAT('%', :text, '%')))")
     List<Item> findItemsByText(@Param("text") String text, Pageable page);
 
-    List<Item> findItemByItemRequestIdIn(List<Long> itemRequestsId);
+    List<Item> findItemByItemRequestIn(List<ItemRequest> requests);
 }
 
 
