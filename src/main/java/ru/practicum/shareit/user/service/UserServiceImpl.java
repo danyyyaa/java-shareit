@@ -51,9 +51,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public User findById(long id) {
-        return userRepository.findById(id).orElseThrow(() ->
-                new NotFoundException(String.format("Пользователь %s не найден.", id)));
+    public User findById(long userId) {
+        return userRepository.findById(userId).orElseThrow(() ->
+                new NotFoundException(String.format("Пользователь %s не найден.", userId)));
     }
 
     @Override

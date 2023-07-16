@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.marker.Create;
+import ru.practicum.shareit.validation.marker.Create;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -24,4 +24,6 @@ public class ItemDto {
 
     @NotNull(groups = {Create.class})
     private Boolean available;
+
+    private Long requestId;
 }

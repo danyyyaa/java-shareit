@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
@@ -9,8 +10,8 @@ import ru.practicum.shareit.booking.enums.State;
 import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -21,7 +22,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static ru.practicum.shareit.booking.enums.Status.*;
-import static ru.practicum.shareit.util.Constant.SORT_BY_START_DATE_DESC;
 
 @Service
 @RequiredArgsConstructor
@@ -69,7 +69,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<Booking> findByUserId(long userId, String stateString) {
+    public Collection<Booking> findByUserId(long userId, String stateString, Pageable page) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException(String.format("Пользователь %s не найден.", userId))
         );
@@ -82,27 +82,27 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case ALL:
-                bookings = bookingRepository.findByBooker(user, SORT_BY_START_DATE_DESC);
+                bookings = bookingRepository.findByBooker(user, page);
                 break;
             case CURRENT:
                 bookings = bookingRepository.findByBookerCurrent(
-                        user, currentMoment, SORT_BY_START_DATE_DESC);
+                        user, currentMoment, page);
                 break;
             case PAST:
                 bookings = bookingRepository.findByBookerPast(
-                        user, currentMoment, SORT_BY_START_DATE_DESC);
+                        user, currentMoment, page);
                 break;
             case FUTURE:
                 bookings = bookingRepository.findByBookerFuture(
-                        user, currentMoment, SORT_BY_START_DATE_DESC);
+                        user, currentMoment, page);
                 break;
             case WAITING:
                 bookings = bookingRepository.findByBookerAndStatus(
-                        user, Status.WAITING, SORT_BY_START_DATE_DESC);
+                        user, Status.WAITING, page);
                 break;
             case REJECTED:
                 bookings = bookingRepository.findByBookerAndStatus(
-                        user, Status.REJECTED, SORT_BY_START_DATE_DESC);
+                        user, Status.REJECTED, page);
                 break;
             default:
                 bookings = Collections.emptyList();
@@ -151,7 +151,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<Booking> findOwnerBookings(long userId, String stateString) {
+    public Collection<Booking> findOwnerBookings(long userId, String stateString, Pageable page) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException(String.format("Пользователь %s не найден.", userId))
         );
@@ -165,27 +165,27 @@ public class BookingServiceImpl implements BookingService {
         switch (state) {
             case ALL:
                 bookings = bookingRepository.findByItemOwner(
-                        user, SORT_BY_START_DATE_DESC);
+                        user, page);
                 break;
             case CURRENT:
                 bookings = bookingRepository.findByItemOwnerCurrent(
-                        user, currentMoment, SORT_BY_START_DATE_DESC);
+                        user, currentMoment, page);
                 break;
             case PAST:
                 bookings = bookingRepository.findByItemOwnerPast(
-                        user, currentMoment, SORT_BY_START_DATE_DESC);
+                        user, currentMoment, page);
                 break;
             case FUTURE:
                 bookings = bookingRepository.findByItemOwnerFuture(
-                        user, currentMoment, SORT_BY_START_DATE_DESC);
+                        user, currentMoment, page);
                 break;
             case WAITING:
                 bookings = bookingRepository.findByItemOwnerAndStatus(
-                        user, Status.WAITING, SORT_BY_START_DATE_DESC);
+                        user, Status.WAITING, page);
                 break;
             case REJECTED:
                 bookings = bookingRepository.findByItemOwnerAndStatus(
-                        user, Status.REJECTED, SORT_BY_START_DATE_DESC);
+                        user, Status.REJECTED, page);
                 break;
             default:
                 bookings = Collections.emptyList();

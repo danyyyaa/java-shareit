@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,17 +9,20 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.enums.Status;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
+import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.CommentRepository;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemAllFieldsDto;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -37,13 +41,23 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
-    public Item save(Item item, long ownerId) {
+    public Item save(ItemDto itemDto, long ownerId) {
+        Item item = ItemMapper.mapToItem(itemDto);
+
         User owner = userRepository.findById(ownerId).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", ownerId)));
 
         item.setOwner(owner);
+
+        if (itemDto.getRequestId() != null) {
+            ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() ->
+                            new NotFoundException(String.format("Запрос %s не найден", item.getItemRequest().getId())));
+            item.setItemRequest(itemRequest);
+        }
 
         return itemRepository.save(item);
     }
@@ -140,19 +154,19 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<ItemAllFieldsDto> searchByText(String text, long userId) {
+    public Collection<ItemAllFieldsDto> searchByText(String text, long userId, Pageable page) {
         if (text.isBlank()) {
             return Collections.emptyList();
         }
 
-        List<Item> items = itemRepository.findItemsByText(text);
+        List<Item> items = itemRepository.findItemsByText(text, page);
         return findItemsDto(items, userId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<ItemAllFieldsDto> findItemsByUserId(long userId) {
-        List<Item> items = itemRepository.findAllByOwnerId(userId);
+    public Collection<ItemAllFieldsDto> findItemsByUserId(long userId, Pageable page) {
+        List<Item> items = itemRepository.findAllByOwnerId(userId, page);
         return findItemsDto(items, userId);
     }
 

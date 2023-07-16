@@ -3,11 +3,10 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.marker.Create;
+import ru.practicum.shareit.validation.marker.Create;
 import ru.practicum.shareit.aspect.ToLog;
-import ru.practicum.shareit.marker.Update;
+import ru.practicum.shareit.validation.marker.Update;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.Collection;
