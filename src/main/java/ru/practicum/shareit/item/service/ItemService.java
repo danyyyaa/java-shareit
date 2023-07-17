@@ -2,7 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.item.dto.CommentResponseDto;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.entity.Item;
 import ru.practicum.shareit.item.dto.ItemAllFieldsDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
