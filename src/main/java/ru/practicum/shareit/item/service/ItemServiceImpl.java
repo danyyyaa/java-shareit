@@ -55,7 +55,7 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getRequestId() != null) {
             ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId())
                     .orElseThrow(() ->
-                            new NotFoundException(String.format("Запрос %s не найден", item.getItemRequest().getId())));
+                            new NotFoundException(String.format("Запрос %s не найден", itemDto.getRequestId())));
             item.setItemRequest(itemRequest);
         }
 
