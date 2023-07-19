@@ -42,15 +42,10 @@ class BookingServiceImplTest {
     private UserRepository mockUserRepository;
 
     private Item item;
-
     private User user;
-
     private Booking booking;
-
     private static LocalDateTime start;
-
     private static LocalDateTime end;
-
     private static Pageable page;
 
     @BeforeAll

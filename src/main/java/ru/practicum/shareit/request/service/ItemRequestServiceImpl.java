@@ -83,11 +83,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestResponseDto findItemRequestsById(long userId, long requestId) {
-        User user = userRepository.findById(userId).orElseThrow(() ->
+        userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", userId)));
 
         ItemRequest itemRequest = itemRequestRepository.findById(requestId).orElseThrow(() ->
-                new NotFoundException(String.format("Бронирование %s не найдено.", user.getId())));
+                new NotFoundException(String.format("Запрос %s не найден.", requestId)));
 
         Map<ItemRequest, List<Item>> map = findItemsToItemRequests(List.of(itemRequest));
         return mapToDto(map).get(0);
