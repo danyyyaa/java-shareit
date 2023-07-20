@@ -314,7 +314,7 @@ class ItemServiceImplTests {
 
 
     @Test
-    void _ShouldThrowValidationExceptionWhenTextIsBlankWhenSaveComment() {
+    void shouldThrowValidationExceptionWhenTextIsBlankWhenSaveComment() {
         long itemId = 1L;
         long userId = 1L;
         String text = "";
