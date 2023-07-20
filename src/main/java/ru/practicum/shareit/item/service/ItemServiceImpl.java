@@ -165,7 +165,6 @@ public class ItemServiceImpl implements ItemService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", userId)));
 
-
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new NotFoundException(String.format("Item %s не найден.", itemId)));
 
@@ -187,7 +186,6 @@ public class ItemServiceImpl implements ItemService {
                 .build();
 
         Comment savedComment = commentRepository.save(comment);
-
         return CommentMapper.mapToCommentResponseDto(savedComment);
     }
 
