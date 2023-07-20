@@ -226,7 +226,7 @@ class ItemServiceImplTests {
     }
 
     @Test
-    void ShouldThrowNotFoundExceptionWhenItemNotFoundInFindById() {
+    void shouldThrowNotFoundExceptionWhenItemNotFoundInFindById() {
         when(mockItemRepository.findById(item.getId())).thenReturn(Optional.empty());
 
         long itemId = item.getId();
@@ -328,7 +328,7 @@ class ItemServiceImplTests {
     }
 
     @Test
-    void ShouldThrowValidationExceptionWhenUserHasNoBookingsInSaveComment() {
+    void shouldThrowValidationExceptionWhenUserHasNoBookingsInSaveComment() {
         long itemId = 1L;
         long userId = 1L;
         String text = "Test comment";
@@ -346,7 +346,7 @@ class ItemServiceImplTests {
     }
 
     @Test
-    void ShouldThrowValidationExceptionWhenNoBookingsForItemInSaveComment() {
+    void shouldThrowValidationExceptionWhenNoBookingsForItemInSaveComment() {
         long itemId = 1L;
         long userId = 1L;
         String text = "Test comment";
@@ -366,7 +366,7 @@ class ItemServiceImplTests {
     }
 
     @Test
-    void ShouldThrowNotFoundExceptionWhenItemRequestNotFoundInSave() {
+    void shouldThrowNotFoundExceptionWhenItemRequestNotFoundInSave() {
         long ownerId = 1L;
         long nonExistingItemRequestId = 1L;
 
