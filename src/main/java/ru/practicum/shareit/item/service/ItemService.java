@@ -13,7 +13,7 @@ public interface ItemService {
     Item save(ItemDto item, long userId);
 
     Item update(Item item, long itemId, long userId);
-    
+
     ItemAllFieldsDto findById(long userId, long itemId);
 
     Collection<ItemAllFieldsDto> searchByText(String text, long userId, Pageable page);
