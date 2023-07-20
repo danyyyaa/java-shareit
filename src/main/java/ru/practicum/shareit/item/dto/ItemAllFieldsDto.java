@@ -11,7 +11,7 @@ import java.util.Collection;
 @AllArgsConstructor
 @Builder
 public class ItemAllFieldsDto {
-    private long id;
+    private Long id;
     private String name;
     private String description;
     private Boolean available;

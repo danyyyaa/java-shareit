@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class ItemGetOwnItemRequestDto {
-    private long id;
+    private Long id;
     private String name;
     private String description;
     private Boolean available;

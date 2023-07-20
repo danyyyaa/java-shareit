@@ -87,6 +87,7 @@ public class BookingController {
                                                              @RequestParam(defaultValue = "all") String state,
                                                              @RequestParam(defaultValue = PAGE_DEFAULT_FROM) @PositiveOrZero Short from,
                                                              @RequestParam(defaultValue = PAGE_DEFAULT_SIZE) @PositiveOrZero Short size) {
+
         Pageable page = PageRequest.of(from / size, size, SORT_BY_START_DATE_DESC);
         return bookingService.findOwnerBookings(userId, state, page)
                 .stream()

@@ -12,7 +12,7 @@ import java.util.Collection;
 @Builder
 @AllArgsConstructor
 public class ItemRequestResponseDto {
-    private long id;
+    private Long id;
     private String description;
     private LocalDateTime created;
     private Collection<ItemGetOwnItemRequestDto> items;

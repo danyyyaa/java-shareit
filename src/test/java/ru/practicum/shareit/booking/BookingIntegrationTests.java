@@ -29,7 +29,7 @@ import static ru.practicum.shareit.booking.enums.Status.WAITING;
 @Transactional
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class BookingIntegrationTest {
+class BookingIntegrationTests {
     private final ItemService itemService;
     private final UserService userService;
     private final BookingService bookingService;

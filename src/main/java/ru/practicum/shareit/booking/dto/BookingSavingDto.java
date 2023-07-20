@@ -17,7 +17,7 @@ import static ru.practicum.shareit.util.Constant.TIME_PATTERN;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingSavingDto {
-    private long itemId;
+    private Long itemId;
 
     @NotNull
     @FutureOrPresent

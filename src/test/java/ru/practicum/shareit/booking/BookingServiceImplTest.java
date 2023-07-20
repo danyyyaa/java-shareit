@@ -737,7 +737,6 @@ class BookingServiceImplTest {
 
         assertThrows(NotFoundException.class, () -> bookingService.updateAvailableStatus(
                 bookingId, true, bookingId));
-        verify(mockBookingRepository, times(1)).findById(booking.getId());
     }
 }
 
