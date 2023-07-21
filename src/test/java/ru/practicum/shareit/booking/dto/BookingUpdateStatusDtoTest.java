@@ -18,7 +18,7 @@ class BookingUpdateStatusDtoTest {
     private JacksonTester<BookingUpdateStatusDto> bookingUpdateStatusDtoJacksonTester;
 
     @Test
-    void bookingUpdateStatusDto() throws IOException {
+    void bookingUpdateStatusDtoTest() throws IOException {
         BookingUpdateStatusDto bookingUpdateStatusDto = new BookingUpdateStatusDto(APPROVED);
 
         JsonContent<BookingUpdateStatusDto> jsonContent =
