@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.practicum.shareit.util.Constant.USER_ID_HEADER;
 
-
 @ExtendWith(MockitoExtension.class)
 class BookingControllerTests {
 
@@ -190,5 +189,4 @@ class BookingControllerTests {
                 .andExpect(jsonPath("$[0].end[2]", is(bookingSavingDto.getEnd().getDayOfMonth())))
                 .andExpect(jsonPath("$[0].status", is(String.valueOf(booking.getStatus()))));
     }
-
 }

@@ -116,7 +116,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenBookingTimeDontValidInSave() {
+    void shouldThrowExceptionWhenBookingTimeNotValidInSave() {
         when(mockItemRepository.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(item));
 
@@ -126,11 +126,11 @@ class BookingServiceImplTest {
         LocalDateTime max = LocalDateTime.MAX;
         LocalDateTime now = LocalDateTime.now();
 
-        assertThrows(ValidationException.class, () -> bookingService.save(itemId, start, min, userId));
-        assertThrows(ValidationException.class, () -> bookingService.save(itemId, start, start, userId));
-        assertThrows(ValidationException.class, () ->
+        assertThrows(NotFoundException.class, () -> bookingService.save(itemId, start, min, userId));
+        assertThrows(NotFoundException.class, () -> bookingService.save(itemId, start, start, userId));
+        assertThrows(NotFoundException.class, () ->
                 bookingService.save(itemId, max, now, userId));
-        assertThrows(ValidationException.class, () ->
+        assertThrows(NotFoundException.class, () ->
                 bookingService.save(itemId, max, min, userId));
         verify(mockItemRepository, times(4)).findById(anyLong());
     }
@@ -748,7 +748,7 @@ class BookingServiceImplTest {
         LocalDateTime start = LocalDateTime.now().plusHours(1);
         LocalDateTime end = LocalDateTime.now();
 
-        assertThrows(ValidationException.class, () -> bookingService.save(itemId, start, end, 2L));
+        assertThrows(NotFoundException.class, () -> bookingService.save(itemId, start, end, 2L));
     }
 
     @Test

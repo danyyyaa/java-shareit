@@ -10,7 +10,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemGetOwnItemRequestDto;
 import ru.practicum.shareit.item.entity.Item;
@@ -82,12 +81,6 @@ class ItemRequestServiceImplTests {
                 .itemRequest(itemRequest)
                 .owner(user)
                 .build();
-    }
-
-    @Test
-    void shouldThrowExceptionWhenSaveItemRequestNotValid() {
-        assertThrows(ValidationException.class, () -> itemRequestService.saveItemRequest("", 1L));
-        assertThrows(ValidationException.class, () -> itemRequestService.saveItemRequest(null, 1L));
     }
 
     @Test

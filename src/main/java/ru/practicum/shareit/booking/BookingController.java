@@ -12,6 +12,7 @@ import ru.practicum.shareit.aspect.ToLog;
 import ru.practicum.shareit.validation.ValuesAllowedConstraint;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -50,7 +51,7 @@ public class BookingController {
                                                                            message = "Unknown state: UNSUPPORTED_STATUS")
                                                                    @RequestParam(defaultValue = "all") String state,
                                                                    @RequestParam(defaultValue = PAGE_DEFAULT_FROM) @PositiveOrZero Short from,
-                                                                   @RequestParam(defaultValue = PAGE_DEFAULT_SIZE) @PositiveOrZero Short size) {
+                                                                   @RequestParam(defaultValue = PAGE_DEFAULT_SIZE) @Positive Short size) {
         Pageable page = PageRequest.of(from / size, size, SORT_BY_START_DATE_DESC);
         return bookingService.findByUserId(userId, state, page)
                 .stream()
@@ -86,7 +87,7 @@ public class BookingController {
                                                                      message = "Unknown state: UNSUPPORTED_STATUS")
                                                              @RequestParam(defaultValue = "all") String state,
                                                              @RequestParam(defaultValue = PAGE_DEFAULT_FROM) @PositiveOrZero Short from,
-                                                             @RequestParam(defaultValue = PAGE_DEFAULT_SIZE) @PositiveOrZero Short size) {
+                                                             @RequestParam(defaultValue = PAGE_DEFAULT_SIZE) @Positive Short size) {
 
         Pageable page = PageRequest.of(from / size, size, SORT_BY_START_DATE_DESC);
         return bookingService.findOwnerBookings(userId, state, page)

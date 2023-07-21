@@ -11,6 +11,8 @@ import ru.practicum.shareit.request.dto.ItemRequestRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 
@@ -25,7 +27,7 @@ public class ItemRequestController {
     private final ItemRequestService itemRequestService;
 
     @PostMapping
-    public ItemRequest saveItemRequest(@RequestBody ItemRequestRequestDto dto,
+    public ItemRequest saveItemRequest(@Valid @RequestBody ItemRequestRequestDto dto,
                                        @RequestHeader(USER_ID_HEADER) long userId) {
         return itemRequestService.saveItemRequest(dto.getDescription(), userId);
     }
@@ -38,7 +40,7 @@ public class ItemRequestController {
     @GetMapping("/all")
     public Collection<ItemRequestResponseDto> findAllItemRequests(@RequestHeader(USER_ID_HEADER) long userId,
                                                                   @RequestParam(defaultValue = PAGE_DEFAULT_FROM) @PositiveOrZero Short from,
-                                                                  @RequestParam(defaultValue = PAGE_DEFAULT_SIZE) @PositiveOrZero Short size) {
+                                                                  @RequestParam(defaultValue = PAGE_DEFAULT_SIZE) @Positive Short size) {
 
         Pageable page = PageRequest.of(from / size, size, Sort.by("created").descending());
         return itemRequestService.findAllItemRequests(userId, page);

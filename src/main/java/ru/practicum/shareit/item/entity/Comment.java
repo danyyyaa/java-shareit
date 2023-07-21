@@ -9,10 +9,11 @@ import java.time.LocalDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Builder(toBuilder = true)
-@EqualsAndHashCode(exclude = {"item", "author"})
 @Table(name = "comments", schema = "public")
+@Getter
+@Setter
+@ToString
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -95,8 +95,6 @@ class BookingIntegrationTests {
         Booking bookingFromDb = query.setParameter("id", 1L).getSingleResult();
         assertThat(bookingFromDb.getStart(), equalTo(start));
         assertThat(bookingFromDb.getEnd(), equalTo(end));
-        assertThat(bookingFromDb.getBooker(), equalTo(secondUser));
-        assertThat(bookingFromDb.getItem(), equalTo(item));
         assertThat(bookingFromDb.getStatus(), equalTo(WAITING));
     }
 

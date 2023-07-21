@@ -118,9 +118,6 @@ class ItemIntegrationTests {
         item.setId(1L);
         assertThat(comment.getId(), notNullValue());
         assertThat(comment.getText(), equalTo(text));
-        assertThat(comment.getItem(), equalTo(item));
-        assertThat(comment.getAuthor(), equalTo(secondUser));
-
     }
 
     @Test

@@ -45,14 +45,6 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Вещь должна быть доступна для бронирования");
         }
 
-        if (start.equals(end)) {
-            throw new ValidationException("Время начала бронирования не может совпадать со временем его окончания");
-        }
-
-        if (end.isBefore(start)) {
-            throw new ValidationException("Время окончания бронирования не может быть раньше времени его начала");
-        }
-
         User booker = userRepository.findById(bookerId).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", bookerId)));
 
