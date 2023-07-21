@@ -45,7 +45,7 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Вещь должна быть доступна для бронирования");
         }
 
-        if (end.isBefore(LocalDateTime.now()) || start.equals(end)) {
+        if (start.equals(end)) {
             throw new ValidationException("Время начала бронирования не может совпадать со временем его окончания");
         }
 

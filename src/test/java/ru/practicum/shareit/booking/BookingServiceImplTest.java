@@ -738,5 +738,43 @@ class BookingServiceImplTest {
         assertThrows(NotFoundException.class, () -> bookingService.updateAvailableStatus(
                 bookingId, true, bookingId));
     }
+
+    @Test
+    void shouldThrowValidationExceptionWhenDateIsBefore() {
+        when(mockItemRepository.findById(anyLong()))
+                .thenReturn(Optional.ofNullable(item));
+
+        long itemId = item.getId();
+        LocalDateTime start = LocalDateTime.now().plusHours(1);
+        LocalDateTime end = LocalDateTime.now();
+
+        assertThrows(ValidationException.class, () -> bookingService.save(itemId, start, end, 2L));
+    }
+
+    @Test
+    void shouldThrowNotFoundExceptionWhenUserIsNeitherBookerNorOwner() {
+        long bookingId = 1L;
+        long userId = 99L;
+
+        Booking booking = Booking.builder()
+                .id(bookingId)
+                .booker(User.builder().id(123L).build())
+                .item(Item.builder().owner(User.builder().id(124L).build()).build())
+                .build();
+
+        User user = User.builder().id(userId).build();
+
+        when(mockBookingRepository.findById(bookingId))
+                .thenReturn(Optional.of(booking));
+
+        when(mockUserRepository.findById(userId))
+                .thenReturn(Optional.of(user));
+
+        assertThrows(NotFoundException.class,
+                () -> bookingService.findAllBookingsByUserId(bookingId, userId));
+
+        verify(mockBookingRepository, times(1)).findById(bookingId);
+        verify(mockUserRepository, times(1)).findById(userId);
+    }
 }
 

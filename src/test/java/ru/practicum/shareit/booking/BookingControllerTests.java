@@ -52,6 +52,9 @@ class BookingControllerTests {
 
     @BeforeEach
     void init() {
+        LocalDateTime start = LocalDateTime.now().plusHours(1);
+        LocalDateTime end = LocalDateTime.MAX;
+
         mvc = MockMvcBuilders
                 .standaloneSetup(bookingController)
                 .build();
@@ -75,28 +78,19 @@ class BookingControllerTests {
                 .booker(user)
                 .item(item)
                 .status(Status.APPROVED)
+                .start(start)
+                .end(end)
                 .build();
 
         bookingSavingDto = BookingSavingDto.builder()
+                .start(start)
+                .end(end)
                 .itemId(1L)
                 .build();
     }
 
     @Test
     void shouldSaveBooking() throws Exception {
-        LocalDateTime start = LocalDateTime.now().plusHours(1);
-        LocalDateTime end = start.plusHours(2);
-
-
-        BookingSavingDto bookingSavingDto = BookingSavingDto.builder()
-                .itemId(1L)
-                .start(start)
-                .end(end)
-                .build();
-
-
-        booking.setStart(start);
-        booking.setEnd(end);
         when(mockBookingService.save(anyLong(), any(), any(), anyLong()))
                 .thenReturn(booking);
 
@@ -108,6 +102,12 @@ class BookingControllerTests {
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.start[0]", is(bookingSavingDto.getStart().getYear())))
+                .andExpect(jsonPath("$.start[1]", is(bookingSavingDto.getStart().getMonthValue())))
+                .andExpect(jsonPath("$.start[2]", is(bookingSavingDto.getStart().getDayOfMonth())))
+                .andExpect(jsonPath("$.end[0]", is(bookingSavingDto.getEnd().getYear())))
+                .andExpect(jsonPath("$.end[1]", is(bookingSavingDto.getEnd().getMonthValue())))
+                .andExpect(jsonPath("$.end[2]", is(bookingSavingDto.getEnd().getDayOfMonth())))
                 .andExpect(jsonPath("$.status", is(String.valueOf(booking.getStatus()))))
                 .andExpect(jsonPath("$.id", is(1)));
     }
@@ -117,9 +117,6 @@ class BookingControllerTests {
         when(mockBookingService.findByUserId(anyLong(), any(), any()))
                 .thenReturn(List.of(booking));
 
-        System.out.println("BookingStart : " + booking.getStart());
-        System.out.println("BookingEnd : " + booking.getEnd());
-
         mvc.perform(get("/bookings")
                         .header(USER_ID_HEADER, 1)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -127,9 +124,12 @@ class BookingControllerTests {
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].start", is(bookingSavingDto.getStart())))
-                .andExpect(jsonPath("$[0].end", is(booking.getEnd())));
+                .andExpect(jsonPath("$[0].start[0]", is(bookingSavingDto.getStart().getYear())))
+                .andExpect(jsonPath("$[0].start[1]", is(bookingSavingDto.getStart().getMonthValue())))
+                .andExpect(jsonPath("$[0].start[2]", is(bookingSavingDto.getStart().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].end[0]", is(bookingSavingDto.getEnd().getYear())))
+                .andExpect(jsonPath("$[0].end[1]", is(bookingSavingDto.getEnd().getMonthValue())))
+                .andExpect(jsonPath("$[0].end[2]", is(bookingSavingDto.getEnd().getDayOfMonth())));
     }
 
     @Test
@@ -145,8 +145,13 @@ class BookingControllerTests {
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.start", is(booking.getStart())))
-                .andExpect(jsonPath("$.end", is(booking.getEnd())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.start[0]", is(bookingSavingDto.getStart().getYear())))
+                .andExpect(jsonPath("$.start[1]", is(bookingSavingDto.getStart().getMonthValue())))
+                .andExpect(jsonPath("$.start[2]", is(bookingSavingDto.getStart().getDayOfMonth())))
+                .andExpect(jsonPath("$.end[0]", is(bookingSavingDto.getEnd().getYear())))
+                .andExpect(jsonPath("$.end[1]", is(bookingSavingDto.getEnd().getMonthValue())))
+                .andExpect(jsonPath("$.end[2]", is(bookingSavingDto.getEnd().getDayOfMonth())))
                 .andExpect(jsonPath("$.status", is(String.valueOf(booking.getStatus()))));
     }
 
@@ -159,8 +164,12 @@ class BookingControllerTests {
                         .header(USER_ID_HEADER, 1)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.start", is(booking.getStart())))
-                .andExpect(jsonPath("$.end", is(booking.getEnd())))
+                .andExpect(jsonPath("$.start[0]", is(bookingSavingDto.getStart().getYear())))
+                .andExpect(jsonPath("$.start[1]", is(bookingSavingDto.getStart().getMonthValue())))
+                .andExpect(jsonPath("$.start[2]", is(bookingSavingDto.getStart().getDayOfMonth())))
+                .andExpect(jsonPath("$.end[0]", is(bookingSavingDto.getEnd().getYear())))
+                .andExpect(jsonPath("$.end[1]", is(bookingSavingDto.getEnd().getMonthValue())))
+                .andExpect(jsonPath("$.end[2]", is(bookingSavingDto.getEnd().getDayOfMonth())))
                 .andExpect(jsonPath("$.status", is(String.valueOf(booking.getStatus()))));
     }
 
@@ -173,8 +182,12 @@ class BookingControllerTests {
                         .header(USER_ID_HEADER, 1)
                 )
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].start", is(bookingSavingDto.getStart())))
-                .andExpect(jsonPath("$[0].end", is(bookingSavingDto.getEnd())))
+                .andExpect(jsonPath("$[0].start[0]", is(bookingSavingDto.getStart().getYear())))
+                .andExpect(jsonPath("$[0].start[1]", is(bookingSavingDto.getStart().getMonthValue())))
+                .andExpect(jsonPath("$[0].start[2]", is(bookingSavingDto.getStart().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].end[0]", is(bookingSavingDto.getEnd().getYear())))
+                .andExpect(jsonPath("$[0].end[1]", is(bookingSavingDto.getEnd().getMonthValue())))
+                .andExpect(jsonPath("$[0].end[2]", is(bookingSavingDto.getEnd().getDayOfMonth())))
                 .andExpect(jsonPath("$[0].status", is(String.valueOf(booking.getStatus()))));
     }
 
