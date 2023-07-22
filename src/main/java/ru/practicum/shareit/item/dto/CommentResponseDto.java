@@ -15,7 +15,7 @@ import static ru.practicum.shareit.util.Constant.TIME_PATTERN;
 @Data
 @Builder
 public class CommentResponseDto {
-    private long id;
+    private Long id;
 
     private String text;
 

@@ -1,19 +1,19 @@
 package ru.practicum.shareit.booking;
 
 import lombok.NonNull;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.enums.Status;
+import ru.practicum.shareit.item.entity.Item;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b " +
             "from Booking b " +
@@ -29,7 +29,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "join fetch b.booker " +
             "join fetch b.item " +
             "where b.booker = :user ")
-    List<Booking> findByBooker(@Param("user") User booker, Sort start);
+    List<Booking> findByBooker(@Param("user") User booker, Pageable page);
+
+    @Query("select b " +
+            "from Booking b " +
+            "join fetch b.booker " +
+            "join fetch b.item " +
+            "where b.booker = :user ")
+    List<Booking> findByBooker(@Param("user") User booker, Sort sort);
 
     @Query("select b " +
             "from Booking b " +
@@ -40,8 +47,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "   and b.end > :time ")
     List<Booking> findByBookerCurrent(
             @Param("user") User booker,
-            @Param("time") LocalDateTime currentTime,
-            Sort start);
+            @Param("time") LocalDateTime currentTime, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
@@ -49,7 +55,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "join fetch b.item " +
             "where b.booker = :user " +
             "   and b.end < :time ")
-    List<Booking> findByBookerPast(@Param("user") User booker, @Param("time") LocalDateTime currentTime, Sort start);
+    List<Booking> findByBookerPast(@Param("user") User booker,
+                                   @Param("time") LocalDateTime currentTime, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
@@ -57,7 +64,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "join fetch b.item " +
             "where b.booker = :user " +
             "   and b.start > :time ")
-    List<Booking> findByBookerFuture(@Param("user") User booker, @Param("time") LocalDateTime currentTime, Sort start);
+    List<Booking> findByBookerFuture(@Param("user") User booker,
+                                     @Param("time") LocalDateTime currentTime, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
@@ -65,14 +73,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "join fetch b.item " +
             "where b.booker = :user " +
             "   and b.status = :status ")
-    List<Booking> findByBookerAndStatus(@Param("user") User booker, @Param("status") Status status, Sort start);
+    List<Booking> findByBookerAndStatus(@Param("user") User booker,
+                                        @Param("status") Status status, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
             "join fetch b.booker " +
             "join fetch b.item i " +
             "where i.owner = :user ")
-    List<Booking> findByItemOwner(@Param("user") User itemOwner, Sort start);
+    List<Booking> findByItemOwner(@Param("user") User itemOwner, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
@@ -82,7 +91,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "   and b.start < :time " +
             "   and b.end > :time ")
     List<Booking> findByItemOwnerCurrent(@Param("user") User itemOwner,
-                                         @Param("time") LocalDateTime currentTime, Sort start);
+                                         @Param("time") LocalDateTime currentTime, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
@@ -91,7 +100,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "where i.owner = :user " +
             "   and b.end < :time ")
     List<Booking> findByItemOwnerPast(@Param("user") User itemOwner,
-                                      @Param("time") LocalDateTime currentTime, Sort start);
+                                      @Param("time") LocalDateTime currentTime, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
@@ -100,7 +109,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "where i.owner = :user " +
             "   and b.start > :time ")
     List<Booking> findByItemOwnerFuture(@Param("user") User itemOwner,
-                                        @Param("time") LocalDateTime currentTime, Sort start);
+                                        @Param("time") LocalDateTime currentTime, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
@@ -108,20 +117,21 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "join fetch b.item i " +
             "where i.owner = :user " +
             "   and b.status = :status ")
-    List<Booking> findByItemOwnerAndStatus(@Param("user") User itemOwner, @Param("status") Status status, Sort start);
+    List<Booking> findByItemOwnerAndStatus(@Param("user") User itemOwner,
+                                           @Param("status") Status status, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
             "join fetch b.item i " +
-            "where i.id = :itemId " +
+            "where i = :items " +
             "   and i.owner.id = :ownerId" +
             "   and b.status = :status " +
             "order by b.start")
-    List<Booking> findBookingsByItemId(@Param("itemId") long itemId,
+    List<Booking> findBookingsByItemId(@Param("items") List<Item> items,
                                        @Param("ownerId") long ownerId, Status status);
 
     List<Booking> findBookingByItemIdAndStatusNotInAndStartBefore(
             long itemId, List<Status> statuses, LocalDateTime start);
 
-    List<Booking> findBookingsByItemIdIn(List<Long> itemIds);
+    List<Booking> findBookingsByItemIn(List<Item> items);
 }

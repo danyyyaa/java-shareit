@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class GetBookingUserDto {
-    private long id;
+    private Long id;
 }

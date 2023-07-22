@@ -1,20 +1,23 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingAllFieldsDto;
 import ru.practicum.shareit.booking.dto.BookingSavingDto;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.aspect.ToLog;
 import ru.practicum.shareit.validation.ValuesAllowedConstraint;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.util.Constant.USER_ID_HEADER;
+import static ru.practicum.shareit.util.Constant.*;
 
 @Validated
 @RestController
@@ -46,8 +49,11 @@ public class BookingController {
                                                                                    "waiting",
                                                                                    "rejected"},
                                                                            message = "Unknown state: UNSUPPORTED_STATUS")
-                                                                   @RequestParam(defaultValue = "all") String state) {
-        return bookingService.findByUserId(userId, state)
+                                                                   @RequestParam(defaultValue = "all") String state,
+                                                                   @RequestParam(defaultValue = PAGE_DEFAULT_FROM) @PositiveOrZero Short from,
+                                                                   @RequestParam(defaultValue = PAGE_DEFAULT_SIZE) @Positive Short size) {
+        Pageable page = PageRequest.of(from / size, size, SORT_BY_START_DATE_DESC);
+        return bookingService.findByUserId(userId, state, page)
                 .stream()
                 .map(BookingMapper::mapToBookingAllFieldsDto)
                 .collect(Collectors.toList());
@@ -79,8 +85,12 @@ public class BookingController {
                                                                              "waiting",
                                                                              "rejected"},
                                                                      message = "Unknown state: UNSUPPORTED_STATUS")
-                                                             @RequestParam(defaultValue = "all") String state) {
-        return bookingService.findOwnerBookings(userId, state)
+                                                             @RequestParam(defaultValue = "all") String state,
+                                                             @RequestParam(defaultValue = PAGE_DEFAULT_FROM) @PositiveOrZero Short from,
+                                                             @RequestParam(defaultValue = PAGE_DEFAULT_SIZE) @Positive Short size) {
+
+        Pageable page = PageRequest.of(from / size, size, SORT_BY_START_DATE_DESC);
+        return bookingService.findOwnerBookings(userId, state, page)
                 .stream()
                 .map(BookingMapper::mapToBookingAllFieldsDto)
                 .collect(Collectors.toList());

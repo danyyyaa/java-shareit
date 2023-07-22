@@ -18,7 +18,7 @@ import static ru.practicum.shareit.util.Constant.TIME_PATTERN;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingAllFieldsDto {
-    private long id;
+    private Long id;
 
     @DateTimeFormat(pattern = TIME_PATTERN)
     private LocalDateTime start;

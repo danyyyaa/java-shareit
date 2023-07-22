@@ -2,22 +2,24 @@ package ru.practicum.shareit.booking;
 
 import lombok.*;
 import ru.practicum.shareit.booking.enums.Status;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.entity.Item;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "bookings")
+@Getter
+@Setter
+@ToString
+@Table(name = "bookings", schema = "public")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "start_date")
     private LocalDateTime start;
@@ -27,10 +29,12 @@ public class Booking {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
+    @ToString.Exclude
     private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booker_id")
+    @ToString.Exclude
     private User booker;
 
     @Enumerated(EnumType.STRING)
