@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +8,7 @@ import ru.practicum.shareit.aspect.ToLog;
 import ru.practicum.shareit.booking.dto.BookingAllFieldsDto;
 import ru.practicum.shareit.booking.dto.BookingSavingDto;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.util.OffsetBasedPageRequest;
 import ru.practicum.shareit.validation.ValuesAllowedConstraint;
 
 import javax.validation.Valid;
@@ -52,7 +52,7 @@ public class BookingController {
                                                                    @RequestParam(defaultValue = "all") String state,
                                                                    @RequestParam(defaultValue = PAGE_DEFAULT_FROM) @PositiveOrZero Short from,
                                                                    @RequestParam(defaultValue = PAGE_DEFAULT_SIZE) @Positive Short size) {
-        Pageable page = PageRequest.of(from / size, size, SORT_BY_START_DATE_DESC);
+        Pageable page = new OffsetBasedPageRequest(from, size, SORT_BY_START_DATE_DESC);
         return bookingService.findByUserId(userId, state, page)
                 .stream()
                 .map(BookingMapper.INSTANCE::mapToBookingAllFieldsDto)
@@ -89,7 +89,7 @@ public class BookingController {
                                                              @RequestParam(defaultValue = PAGE_DEFAULT_FROM) @PositiveOrZero Short from,
                                                              @RequestParam(defaultValue = PAGE_DEFAULT_SIZE) @Positive Short size) {
 
-        Pageable page = PageRequest.of(from / size, size, SORT_BY_START_DATE_DESC);
+        Pageable page = new OffsetBasedPageRequest(from, size, SORT_BY_START_DATE_DESC);
         return bookingService.findOwnerBookings(userId, state, page)
                 .stream()
                 .map(BookingMapper.INSTANCE::mapToBookingAllFieldsDto)

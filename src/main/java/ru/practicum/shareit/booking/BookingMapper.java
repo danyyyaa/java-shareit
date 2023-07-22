@@ -12,7 +12,6 @@ import ru.practicum.shareit.user.dto.GetBookingUserDto;
 
 @Mapper(componentModel = "spring")
 public interface BookingMapper {
-
     BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
 
     @Mapping(target = "item", expression = "java(mapToGetBookingItemDto(booking.getItem()))")
