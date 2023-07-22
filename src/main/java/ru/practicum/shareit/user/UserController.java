@@ -21,20 +21,20 @@ public class UserController {
 
     @PostMapping
     public UserDto saveUser(@Validated(Create.class) @RequestBody UserDto userDto) {
-        User user = userService.save(UserMapper.mapToUser(userDto));
-        return UserMapper.mapToUserDto(user);
+        User user = userService.save(UserMapper.INSTANCE.mapToUser(userDto));
+        return UserMapper.INSTANCE.mapToUserDto(user);
     }
 
     @PatchMapping("/{userId}")
     public UserDto updateUser(@Validated(Update.class) @RequestBody UserDto userDto, @PathVariable long userId) {
-        User user = userService.update(UserMapper.mapToUser(userDto), userId);
-        return UserMapper.mapToUserDto(user);
+        User user = userService.update(UserMapper.INSTANCE.mapToUser(userDto), userId);
+        return UserMapper.INSTANCE.mapToUserDto(user);
     }
 
     @GetMapping("/{id}")
     public UserDto findUserById(@PathVariable long id) {
         User user = userService.findById(id);
-        return UserMapper.mapToUserDto(user);
+        return UserMapper.INSTANCE.mapToUserDto(user);
     }
 
     @GetMapping
@@ -42,7 +42,7 @@ public class UserController {
         return userService
                 .findAll()
                 .stream()
-                .map(UserMapper::mapToUserDto)
+                .map(UserMapper.INSTANCE::mapToUserDto)
                 .collect(Collectors.toList());
     }
 

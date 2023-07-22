@@ -5,11 +5,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.BookingMapper;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.enums.Status;
-import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.CommentRepository;
@@ -122,7 +122,7 @@ public class ItemServiceImpl implements ItemService {
                     List<CommentResponseDto> itemComments = commentsMap
                             .getOrDefault(item, Collections.emptyList())
                             .stream()
-                            .map(CommentMapper::mapToCommentResponseDto)
+                            .map(CommentMapper.INSTANCE::mapToCommentResponseDto)
                             .collect(Collectors.toList());
 
                     List<Booking> itemBookings = bookingsMap.getOrDefault(item, Collections.emptyList());
@@ -130,8 +130,8 @@ public class ItemServiceImpl implements ItemService {
                     Optional<Booking> lastOptional = getLastItem(itemBookings);
                     Optional<Booking> nextOptional = getNextItem(itemBookings);
 
-                    BookingDto last = lastOptional.map(BookingMapper::mapFromBookingToBookingDto).orElse(null);
-                    BookingDto next = nextOptional.map(BookingMapper::mapFromBookingToBookingDto).orElse(null);
+                    BookingDto last = lastOptional.map(BookingMapper.INSTANCE::mapFromBookingToBookingDto).orElse(null);
+                    BookingDto next = nextOptional.map(BookingMapper.INSTANCE::mapFromBookingToBookingDto).orElse(null);
 
                     return ItemMapper.mapToItemAllFieldsDto(item, last, next, itemComments);
                 })
@@ -186,7 +186,7 @@ public class ItemServiceImpl implements ItemService {
                 .build();
 
         Comment savedComment = commentRepository.save(comment);
-        return CommentMapper.mapToCommentResponseDto(savedComment);
+        return CommentMapper.INSTANCE.mapToCommentResponseDto(savedComment);
     }
 
     private Optional<Booking> getNextItem(List<Booking> bookings) {

@@ -10,8 +10,8 @@ import ru.practicum.shareit.item.dto.ItemGetOwnItemRequestDto;
 import ru.practicum.shareit.item.entity.Item;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestMapper;
 import ru.practicum.shareit.request.ItemRequestRepository;
-import ru.practicum.shareit.request.ItemRequestsMapper;
 import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
@@ -59,8 +59,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                             .map(ItemMapper::mapFromItemToItemGetOwnItemRequestDto)
                             .collect(Collectors.toList());
 
-                    return ItemRequestsMapper
-                            .mapToItemRequestResponseDtoWithItemId(itemRequest, items);
+                    return ItemRequestMapper.INSTANCE.mapToItemRequestResponseDtoWithItemId(itemRequest, items);
                 })
                 .collect(Collectors.toList());
     }
@@ -96,7 +95,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                             .stream()
                             .map(ItemMapper::mapFromItemToItemGetOwnItemRequestDto)
                             .collect(Collectors.toList());
-                    return ItemRequestsMapper.mapToItemRequestResponseDtoWithItemId(entry.getKey(), itemDtos);
+                    return ItemRequestMapper.INSTANCE.mapToItemRequestResponseDtoWithItemId(entry.getKey(), itemDtos);
                 })
                 .collect(Collectors.toList());
     }

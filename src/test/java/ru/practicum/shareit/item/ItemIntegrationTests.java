@@ -154,7 +154,8 @@ class ItemIntegrationTests {
         itemDto.setDescription("toSearch");
         itemService.save(itemDto, 1L);
 
-        List<ItemAllFieldsDto> items = (List<ItemAllFieldsDto>) itemService.searchByText("toSearch", 1L, page);
+        List<ItemAllFieldsDto> items = (List<ItemAllFieldsDto>)
+                itemService.searchByText("toSearch", 1L, page);
 
         assertThat(items.size(), equalTo(1));
         assertThat(items.get(0).getDescription(), equalTo("toSearch"));

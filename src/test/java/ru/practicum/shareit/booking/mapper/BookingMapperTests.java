@@ -1,8 +1,8 @@
 package ru.practicum.shareit.booking.mapper;
 
 import org.junit.jupiter.api.Test;
+import ru.practicum.shareit.BookingMapper;
 import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.user.User;
 
@@ -22,7 +22,7 @@ class BookingMapperTests {
                 .booker(user)
                 .build();
 
-        BookingDto bookingDto = BookingMapper.mapFromBookingToBookingDto(booking);
+        BookingDto bookingDto = BookingMapper.INSTANCE.mapFromBookingToBookingDto(booking);
 
         assertThat(bookingDto.getId(), equalTo(booking.getId()));
         assertThat(bookingDto.getBookerId(), equalTo(booking.getBooker().getId()));

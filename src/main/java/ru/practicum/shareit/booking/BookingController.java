@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingAllFieldsDto;
 import ru.practicum.shareit.booking.dto.BookingSavingDto;
 import ru.practicum.shareit.booking.service.BookingService;
@@ -36,7 +37,7 @@ public class BookingController {
                 bookingSavingDto.getEnd(),
                 userId);
 
-        return BookingMapper.mapToBookingAllFieldsDto(booking);
+        return BookingMapper.INSTANCE.mapToBookingAllFieldsDto(booking);
     }
 
     @GetMapping
@@ -55,7 +56,7 @@ public class BookingController {
         Pageable page = PageRequest.of(from / size, size, SORT_BY_START_DATE_DESC);
         return bookingService.findByUserId(userId, state, page)
                 .stream()
-                .map(BookingMapper::mapToBookingAllFieldsDto)
+                .map(BookingMapper.INSTANCE::mapToBookingAllFieldsDto)
                 .collect(Collectors.toList());
     }
 
@@ -64,7 +65,7 @@ public class BookingController {
                                                      @RequestParam(required = false) Boolean approved,
                                                      @RequestHeader(USER_ID_HEADER) long userId) {
         Booking booking = bookingService.updateAvailableStatus(bookingId, approved, userId);
-        return BookingMapper.mapToBookingAllFieldsDto(booking);
+        return BookingMapper.INSTANCE.mapToBookingAllFieldsDto(booking);
     }
 
     @GetMapping("/{bookingId}")
@@ -72,7 +73,7 @@ public class BookingController {
                                                       @RequestHeader(value = USER_ID_HEADER) long userId) {
         Booking booking = bookingService.findAllBookingsByUserId(bookingId, userId);
 
-        return BookingMapper.mapToBookingAllFieldsDto(booking);
+        return BookingMapper.INSTANCE.mapToBookingAllFieldsDto(booking);
     }
 
     @GetMapping("/owner")
@@ -92,7 +93,7 @@ public class BookingController {
         Pageable page = PageRequest.of(from / size, size, SORT_BY_START_DATE_DESC);
         return bookingService.findOwnerBookings(userId, state, page)
                 .stream()
-                .map(BookingMapper::mapToBookingAllFieldsDto)
+                .map(BookingMapper.INSTANCE::mapToBookingAllFieldsDto)
                 .collect(Collectors.toList());
     }
 }
