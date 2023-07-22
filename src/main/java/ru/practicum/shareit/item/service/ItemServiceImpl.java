@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.BookingMapper;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.enums.Status;
@@ -18,9 +18,9 @@ import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemAllFieldsDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.CommentMapper;
-import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.entity.Comment;
 import ru.practicum.shareit.item.entity.Item;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
@@ -45,7 +45,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item save(ItemDto itemDto, long ownerId) {
-        Item item = ItemMapper.mapToItem(itemDto);
+        Item item = ItemMapper.INSTANCE.mapToItem(itemDto);
 
         User owner = userRepository.findById(ownerId).orElseThrow(() ->
                 new NotFoundException(String.format("Пользователь %s не найден.", ownerId)));
@@ -133,7 +133,7 @@ public class ItemServiceImpl implements ItemService {
                     BookingDto last = lastOptional.map(BookingMapper.INSTANCE::mapFromBookingToBookingDto).orElse(null);
                     BookingDto next = nextOptional.map(BookingMapper.INSTANCE::mapFromBookingToBookingDto).orElse(null);
 
-                    return ItemMapper.mapToItemAllFieldsDto(item, last, next, itemComments);
+                    return ItemMapper.INSTANCE.mapToItemAllFieldsDto(item, last, next, itemComments);
                 })
                 .collect(Collectors.toList());
     }

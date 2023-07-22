@@ -34,15 +34,15 @@ public class ItemController {
     public ItemDto saveItem(@Validated(Create.class) @RequestBody ItemDto itemDto,
                             @RequestHeader(USER_ID_HEADER) long userId) {
         Item item = itemService.save(itemDto, userId);
-        return ItemMapper.mapToItemDto(item);
+        return ItemMapper.INSTANCE.mapToItemDto(item);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@Validated(Update.class) @RequestBody ItemDto itemDto,
                               @RequestHeader(USER_ID_HEADER) long userId,
                               @PathVariable long itemId) {
-        Item item = itemService.update(ItemMapper.mapToItem(itemDto), itemId, userId);
-        return ItemMapper.mapToItemDto(item);
+        Item item = itemService.update(ItemMapper.INSTANCE.mapToItem(itemDto), itemId, userId);
+        return ItemMapper.INSTANCE.mapToItemDto(item);
     }
 
     @GetMapping("/{itemId}")

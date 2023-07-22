@@ -128,7 +128,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "   and b.status = :status " +
             "order by b.start")
     List<Booking> findBookingsByItemId(@Param("items") List<Item> items,
-                                       @Param("ownerId") long ownerId, Status status);
+                                       @Param("ownerId") long ownerId, @Param("status") Status status);
 
     List<Booking> findBookingByItemIdAndStatusNotInAndStartBefore(
             long itemId, List<Status> statuses, LocalDateTime start);

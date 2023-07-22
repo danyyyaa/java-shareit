@@ -20,7 +20,7 @@ class ItemMapperTests {
                 .itemRequest(new ItemRequest())
                 .build();
 
-        ItemDto itemDto = ItemMapper.mapToItemDto(item);
+        ItemDto itemDto = ItemMapper.INSTANCE.mapToItemDto(item);
 
         assertThat(item.getId(), equalTo(itemDto.getId()));
         assertThat(item.getName(), equalTo(itemDto.getName()));
