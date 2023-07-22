@@ -13,6 +13,7 @@ import ru.practicum.shareit.user.dto.GetBookingUserDto;
 
 @Mapper
 public interface BookingMapper {
+
     BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
 
     @Mapping(source = "id", target = "id")
