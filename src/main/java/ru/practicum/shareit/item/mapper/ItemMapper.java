@@ -14,7 +14,7 @@ import ru.practicum.shareit.request.ItemRequest;
 
 import java.util.Collection;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface ItemMapper {
     ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
@@ -39,7 +39,7 @@ public interface ItemMapper {
     @Mapping(source = "id", target = "id")
     BookingDto mapLongToBookingDtoId(Long id);
 
-    @Mapping(source = "item.id", target = "id") // Explicitly specify the source property for 'id' mapping
+    @Mapping(source = "item.id", target = "id")
     ItemAllFieldsDto mapToItemAllFieldsDto(Item item, BookingDto lastBooking,
                                            BookingDto nextBooking, Collection<CommentResponseDto> comments);
 }

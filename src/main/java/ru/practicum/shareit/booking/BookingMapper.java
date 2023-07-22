@@ -10,20 +10,15 @@ import ru.practicum.shareit.item.entity.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.GetBookingUserDto;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface BookingMapper {
 
     BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "start", target = "start")
-    @Mapping(source = "end", target = "end")
     @Mapping(target = "item", expression = "java(mapToGetBookingItemDto(booking.getItem()))")
     @Mapping(target = "booker", expression = "java(mapToGetBookingUserDto(booking.getBooker()))")
-    @Mapping(source = "status", target = "status")
     BookingAllFieldsDto mapToBookingAllFieldsDto(Booking booking);
 
-    @Mapping(source = "id", target = "id")
     @Mapping(source = "booker.id", target = "bookerId")
     BookingDto mapFromBookingToBookingDto(Booking booking);
 

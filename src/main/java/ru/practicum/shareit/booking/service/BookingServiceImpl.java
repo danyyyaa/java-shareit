@@ -70,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
 
         state = State.valueOf(stateString.toUpperCase());
         LocalDateTime currentMoment = LocalDateTime.now();
-        List<Booking> bookings;
+        List<Booking> bookings = Collections.emptyList();
 
         switch (state) {
             case ALL:
@@ -96,8 +96,6 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByBookerAndStatus(
                         user, Status.REJECTED, page);
                 break;
-            default:
-                bookings = Collections.emptyList();
         }
         return bookings;
     }
@@ -152,7 +150,7 @@ public class BookingServiceImpl implements BookingService {
 
         state = State.valueOf(stateString.toUpperCase());
         LocalDateTime currentMoment = LocalDateTime.now();
-        List<Booking> bookings;
+        List<Booking> bookings = Collections.emptyList();
 
         switch (state) {
             case ALL:
@@ -179,8 +177,6 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByItemOwnerAndStatus(
                         user, Status.REJECTED, page);
                 break;
-            default:
-                bookings = Collections.emptyList();
         }
 
         return bookings;
