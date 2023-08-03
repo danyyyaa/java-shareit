@@ -1,44 +1,50 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.aspect.ToLog;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.validation.Create;
-import ru.practicum.shareit.validation.Update;
+import ru.practicum.shareit.user.service.UserService;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
-@Validated
 @ToLog
 public class UserController {
-    private final UserClient userClient;
+    private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<Object> saveUser(@Validated(Create.class) @RequestBody UserDto userDto) {
-        return userClient.saveUser(userDto);
+    public UserDto saveUser(@RequestBody UserDto userDto) {
+        User user = userService.save(UserMapper.INSTANCE.mapToUser(userDto));
+        return UserMapper.INSTANCE.mapToUserDto(user);
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<Object> updateUser(@Validated(Update.class) @RequestBody UserDto userDto, @PathVariable long userId) {
-        return userClient.updateUser(userDto, userId);
+    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable long userId) {
+        User user = userService.update(UserMapper.INSTANCE.mapToUser(userDto), userId);
+        return UserMapper.INSTANCE.mapToUserDto(user);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> findUserById(@PathVariable long id) {
-        return userClient.findUserById(id);
+    public UserDto findUserById(@PathVariable long id) {
+        User user = userService.findById(id);
+        return UserMapper.INSTANCE.mapToUserDto(user);
     }
 
     @GetMapping
-    public ResponseEntity<Object> findAllUsers() {
-        return userClient.findAllUsers();
+    public Collection<UserDto> findAllUsers() {
+        return userService
+                .findAll()
+                .stream()
+                .map(UserMapper.INSTANCE::mapToUserDto)
+                .collect(Collectors.toList());
     }
 
     @DeleteMapping("/{id}")
     public void deleteUserById(@PathVariable long id) {
-        userClient.deleteUserById(id);
+        userService.deleteById(id);
     }
 }

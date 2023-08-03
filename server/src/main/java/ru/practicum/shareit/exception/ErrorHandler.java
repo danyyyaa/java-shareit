@@ -17,17 +17,36 @@ import static ru.practicum.shareit.util.Constant.ERROR_RESPONSE;
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
+    @ExceptionHandler({NotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleNotFound(final RuntimeException e) {
+        log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
+        return createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler({AlreadyExistsException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> handleConflict(final RuntimeException e) {
+        log.debug("Получен статус 409 Conflict {}", e.getMessage(), e);
+        return createErrorResponse(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+    @ExceptionHandler({ValidationException.class,
+            NotAvailableException.class, MethodArgumentNotValidException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleBadRequest(final RuntimeException e) {
+        log.debug("Получен статус 400 Bad request {}", e.getMessage(), e);
+        return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleRaw(final Throwable e) {
         log.debug("Получен статус 500 Internal server error {}", e.getMessage(), e);
-        return createErrorResponse(e.getMessage());
+        return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
-    @ExceptionHandler({ConstraintViolationException.class,
-            IllegalAccessError.class,
-            MethodArgumentNotValidException.class})
+    @ExceptionHandler({ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> catchConstraintViolationException(final ConstraintViolationException e) {
         log.debug("Получен статус 500 Internal server error {}", e.getMessage(), e);
@@ -39,9 +58,9 @@ public class ErrorHandler {
         );
     }
 
-    private Map<String, String> createErrorResponse(String message) {
+    private Map<String, String> createErrorResponse(HttpStatus status, String message) {
         Map<String, String> response = new HashMap<>();
-        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.toString());
+        response.put("status", status.toString());
         response.put("message", message);
         return response;
     }
