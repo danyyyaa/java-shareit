@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.HashMap;
 import java.util.Map;
 
 import static ru.practicum.shareit.util.Constant.ERROR_RESPONSE;
@@ -59,9 +58,7 @@ public class ErrorHandler {
     }
 
     private Map<String, String> createErrorResponse(HttpStatus status, String message) {
-        Map<String, String> response = new HashMap<>();
-        response.put("status", status.toString());
-        response.put("message", message);
-        return response;
+        return Map.of("status", status.toString(),
+                "message", message);
     }
 }

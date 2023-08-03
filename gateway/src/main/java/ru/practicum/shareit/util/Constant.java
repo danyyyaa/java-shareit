@@ -3,8 +3,6 @@ package ru.practicum.shareit.util;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Sort;
 
-import java.util.Comparator;
-
 @UtilityClass
 public class Constant {
     public static final String USER_ID_HEADER = "X-Sharer-User-Id";

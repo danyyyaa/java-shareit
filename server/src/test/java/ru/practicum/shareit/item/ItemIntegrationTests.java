@@ -33,6 +33,7 @@ import static org.hamcrest.Matchers.notNullValue;
 @Transactional
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class ItemIntegrationTests {
     private final UserService userService;
     private final EntityManager entityManager;
@@ -75,7 +76,6 @@ class ItemIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldSaveItem() {
         userService.save(user);
         itemService.save(itemDto, 1L);
@@ -86,7 +86,6 @@ class ItemIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldUpdateItem() {
         userService.save(user);
         itemService.save(itemDto, 1L);
@@ -101,7 +100,6 @@ class ItemIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldSaveComment() {
         userService.save(user);
         userService.save(secondUser);
@@ -121,7 +119,6 @@ class ItemIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldFindById() {
         userService.save(user);
         itemService.save(itemDto, 1L);
@@ -137,7 +134,6 @@ class ItemIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldFindItemsByUserId() {
         userService.save(user);
         itemService.save(itemDto, 1L);
@@ -148,7 +144,6 @@ class ItemIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldSearchByText() {
         userService.save(user);
         itemDto.setDescription("toSearch");

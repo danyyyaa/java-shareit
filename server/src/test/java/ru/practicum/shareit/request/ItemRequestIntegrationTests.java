@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.equalTo;
 @Transactional
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class ItemRequestIntegrationTests {
     private final EntityManager entityManager;
     private final ItemRequestService itemRequestService;
@@ -56,7 +57,6 @@ class ItemRequestIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldSaveItemRequest() {
         userService.save(user);
         ItemRequest itemRequestToSave = itemRequestService.saveItemRequest("description", 1L);
@@ -70,7 +70,6 @@ class ItemRequestIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldFindOwnItemRequests() {
         userService.save(user);
         itemRequestService.saveItemRequest("description", 1L);
@@ -82,7 +81,6 @@ class ItemRequestIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldFindItemRequestById() {
         userService.save(user);
         itemRequestService.saveItemRequest("description", 1L);
@@ -97,7 +95,6 @@ class ItemRequestIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldFindAllItemRequests() {
         User secondUser = User.builder()
                 .name("second")
@@ -118,5 +115,4 @@ class ItemRequestIntegrationTests {
 
         assertThat(itemRequests.size(), equalTo(1));
     }
-
 }

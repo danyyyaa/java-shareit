@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.equalTo;
 @Transactional
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class UserIntegrationTests {
     private final UserService userService;
     private final EntityManager entityManager;
@@ -34,7 +35,6 @@ class UserIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldSaveUser() {
         userService.save(user);
 
@@ -45,7 +45,6 @@ class UserIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldUpdateUser() {
         userService.save(user);
 
@@ -58,7 +57,6 @@ class UserIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldFindByIdUser() {
         userService.save(user);
         User newUser = userService.findById(1L);
@@ -68,7 +66,6 @@ class UserIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldFindAllUsers() {
         userService.save(user);
 
@@ -79,7 +76,6 @@ class UserIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldDeleteByIdUser() {
         userService.save(user);
         assertThat(userService.findAll().size(), equalTo(1));

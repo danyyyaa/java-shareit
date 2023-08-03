@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.HashMap;
 import java.util.Map;
 
 import static ru.practicum.shareit.util.Constant.ERROR_RESPONSE;
@@ -22,7 +21,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleRaw(final Throwable e) {
         log.debug("Получен статус 500 Internal server error {}", e.getMessage(), e);
-        return createErrorResponse(e.getMessage());
+        return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
     @ExceptionHandler({ConstraintViolationException.class,
@@ -39,10 +38,8 @@ public class ErrorHandler {
         );
     }
 
-    private Map<String, String> createErrorResponse(String message) {
-        Map<String, String> response = new HashMap<>();
-        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.toString());
-        response.put("message", message);
-        return response;
+    private Map<String, String> createErrorResponse(HttpStatus status, String message) {
+        return Map.of("status", status.toString(),
+                "message", message);
     }
 }

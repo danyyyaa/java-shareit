@@ -29,6 +29,7 @@ import static ru.practicum.shareit.booking.enums.Status.WAITING;
 @Transactional
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class BookingIntegrationTests {
     private final ItemService itemService;
     private final UserService userService;
@@ -72,7 +73,6 @@ class BookingIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldSaveBooking() {
         userService.save(user);
 
@@ -99,7 +99,6 @@ class BookingIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldFindBookingsByUserId() {
         userService.save(user);
 
@@ -118,7 +117,6 @@ class BookingIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldUpdateAvailableStatus() {
         userService.save(user);
 
@@ -141,7 +139,6 @@ class BookingIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldFindAllBookingsByUserId() {
         userService.save(user);
 
@@ -161,7 +158,6 @@ class BookingIntegrationTests {
     }
 
     @Test
-    @DirtiesContext
     void shouldFindOwnerBookings() {
         userService.save(user);
 
@@ -178,5 +174,4 @@ class BookingIntegrationTests {
 
         assertThat(bookings.size(), equalTo(1));
     }
-
 }
