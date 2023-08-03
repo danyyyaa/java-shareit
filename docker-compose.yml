@@ -13,7 +13,6 @@ services:
       - DB_NAME=shareit
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-
   server:
     build: server
     image: shareit-server-image
@@ -26,7 +25,6 @@ services:
       - DB_NAME=shareit
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-
   db:
     image: postgres:15.1-alpine
     container_name: shareit-database-container
