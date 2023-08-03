@@ -13,7 +13,7 @@
 	<artifactId>shareit</artifactId>
 	<packaging>pom</packaging>
     <modules>
-        <module>gateway</module>
+		<module>gateway</module>
 		<module>server</module>
 	</modules>
     <version>0.0.1-SNAPSHOT</version>
