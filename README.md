@@ -19,7 +19,7 @@
 
 1. Клонируйте репозиторий проекта на свою локальную машину:
    ```
-   git clone https://github.com/SergeyBespalyy/java-shareit.git
+   git clone git@github.com:danyyyaa/java-shareit.git
    ```
 2. Запустите коммандную строку и перейдите в коррень директории с проектом.
 3. Соберите проект
