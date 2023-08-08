@@ -17,9 +17,9 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemAllFieldsDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.entity.Comment;
 import ru.practicum.shareit.item.entity.Item;
-import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.ItemRequestRepository;
@@ -30,8 +30,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.util.Comparator.orderByStartDateAsc;
-import static ru.practicum.shareit.util.Comparator.orderByStartDateDesc;
+import static ru.practicum.shareit.util.Constant.orderByStartDateAsc;
+import static ru.practicum.shareit.util.Constant.orderByStartDateDesc;
 
 @Service
 @RequiredArgsConstructor
