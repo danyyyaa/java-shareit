@@ -10,7 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ConstantTests {
+class comparatorTests {
 
     @Test
     void shouldReturnZeroForEqualStartDatesAsc() {
@@ -20,7 +20,7 @@ class ConstantTests {
         Booking booking2 = Booking.builder()
                 .start(LocalDateTime.of(2023, 7, 21, 10, 0)).build();
 
-        assertEquals(0, Constant.orderByStartDateAsc.compare(booking1, booking2));
+        assertEquals(0, Comparator.orderByStartDateAsc.compare(booking1, booking2));
     }
 
     @Test
@@ -31,7 +31,7 @@ class ConstantTests {
         Booking booking2 = Booking.builder()
                 .start(LocalDateTime.of(2023, 7, 22, 15, 30)).build();
 
-        assertTrue(Constant.orderByStartDateAsc.compare(booking1, booking2) < 0);
+        assertTrue(Comparator.orderByStartDateAsc.compare(booking1, booking2) < 0);
     }
 
     @Test
@@ -42,7 +42,7 @@ class ConstantTests {
         Booking booking2 = Booking.builder()
                 .start(LocalDateTime.of(2023, 7, 21, 10, 0)).build();
 
-        assertTrue(Constant.orderByStartDateAsc.compare(booking1, booking2) > 0);
+        assertTrue(Comparator.orderByStartDateAsc.compare(booking1, booking2) > 0);
     }
 
     @Test
@@ -53,7 +53,7 @@ class ConstantTests {
         Booking booking2 = Booking.builder()
                 .start(LocalDateTime.of(2023, 7, 21, 10, 0)).build();
 
-        assertEquals(0, Constant.orderByStartDateDesc.compare(booking1, booking2));
+        assertEquals(0, Comparator.orderByStartDateDesc.compare(booking1, booking2));
     }
 
     @Test
@@ -64,7 +64,7 @@ class ConstantTests {
         Booking booking2 = Booking.builder()
                 .start(LocalDateTime.of(2023, 7, 22, 15, 30)).build();
 
-        assertTrue(Constant.orderByStartDateDesc.compare(booking1, booking2) > 0);
+        assertTrue(Comparator.orderByStartDateDesc.compare(booking1, booking2) > 0);
     }
 
     @Test
@@ -75,7 +75,7 @@ class ConstantTests {
         Booking booking2 = Booking.builder()
                 .start(LocalDateTime.of(2023, 7, 21, 10, 0)).build();
 
-        assertTrue(Constant.orderByStartDateDesc.compare(booking1, booking2) < 0);
+        assertTrue(Comparator.orderByStartDateDesc.compare(booking1, booking2) < 0);
     }
 
     @Test
@@ -86,7 +86,7 @@ class ConstantTests {
         Booking booking2 = Booking.builder()
                 .start(LocalDateTime.of(2023, 7, 21, 10, 0)).build();
 
-        assertEquals(0, Constant.orderByStartDateAsc.compare(booking1, booking2));
+        assertEquals(0, Comparator.orderByStartDateAsc.compare(booking1, booking2));
     }
 
     @Test
@@ -97,7 +97,7 @@ class ConstantTests {
         Booking booking2 = Booking.builder()
                 .start(LocalDateTime.of(2023, 7, 21, 10, 0)).build();
 
-        assertEquals(0, Constant.orderByStartDateDesc.compare(booking1, booking2));
+        assertEquals(0, Comparator.orderByStartDateDesc.compare(booking1, booking2));
     }
 
     @Test
@@ -108,8 +108,8 @@ class ConstantTests {
         Booking booking2 = Booking.builder()
                 .start(LocalDateTime.of(2023, 7, 21, 10, 0)).build();
 
-        int result1 = Constant.orderByStartDateAsc.compare(booking1, booking2);
-        int result2 = Constant.orderByStartDateAsc.compare(booking2, booking1);
+        int result1 = Comparator.orderByStartDateAsc.compare(booking1, booking2);
+        int result2 = Comparator.orderByStartDateAsc.compare(booking2, booking1);
 
         assertEquals(result1, result2);
     }
@@ -122,8 +122,8 @@ class ConstantTests {
         Booking booking2 = Booking.builder()
                 .start(LocalDateTime.of(2023, 7, 21, 10, 0)).build();
 
-        int result1 = Constant.orderByStartDateDesc.compare(booking1, booking2);
-        int result2 = Constant.orderByStartDateDesc.compare(booking2, booking1);
+        int result1 = Comparator.orderByStartDateDesc.compare(booking1, booking2);
+        int result2 = Comparator.orderByStartDateDesc.compare(booking2, booking1);
 
         assertEquals(result1, result2);
     }
@@ -142,7 +142,7 @@ class ConstantTests {
 
         List<Booking> bookings = Arrays.asList(booking1, booking2, booking3);
 
-        bookings.sort(Constant.orderByStartDateAsc);
+        bookings.sort(Comparator.orderByStartDateAsc);
 
         List<Booking> expectedOrder = List.of(booking3, booking1, booking2);
         assertEquals(expectedOrder, bookings);
@@ -162,7 +162,7 @@ class ConstantTests {
 
         List<Booking> bookings = Arrays.asList(booking1, booking2, booking3);
 
-        bookings.sort(Constant.orderByStartDateDesc);
+        bookings.sort(Comparator.orderByStartDateDesc);
 
         List<Booking> expectedOrder = List.of(booking2, booking1, booking3);
         assertEquals(expectedOrder, bookings);

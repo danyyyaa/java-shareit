@@ -36,8 +36,8 @@ public class BookingController {
     @GetMapping
     public Collection<BookingAllFieldsDto> findAllBookingsByUserId(@RequestHeader(USER_ID_HEADER) long userId,
                                                                    @RequestParam(defaultValue = "all") String state,
-                                                                   @RequestParam(defaultValue = PAGE_DEFAULT_FROM) Short from,
-                                                                   @RequestParam(defaultValue = PAGE_DEFAULT_SIZE) Short size) {
+                                                                   @RequestParam(defaultValue = PAGE_DEFAULT_FROM) int from,
+                                                                   @RequestParam(defaultValue = PAGE_DEFAULT_SIZE) int size) {
         Pageable page = new OffsetBasedPageRequest(from, size, SORT_BY_START_DATE_DESC);
         return bookingService.findByUserId(userId, state, page)
                 .stream()
