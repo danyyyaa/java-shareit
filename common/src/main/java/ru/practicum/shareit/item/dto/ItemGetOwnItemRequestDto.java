@@ -12,5 +12,5 @@ public class ItemGetOwnItemRequestDto {
     private String name;
     private String description;
     private Boolean available;
-    private long requestId;
+    private Long requestId;
 }

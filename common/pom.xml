@@ -44,18 +44,4 @@
             <version>1.7.32</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.7.2</version>
-                <configuration>
-                    <mainClass>ru.practicum.shareit.booking.dto.BookingAllFieldsDto</mainClass>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>
