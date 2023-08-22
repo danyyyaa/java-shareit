@@ -30,8 +30,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.util.Constant.orderByStartDateAsc;
-import static ru.practicum.shareit.util.Constant.orderByStartDateDesc;
+import static ru.practicum.shareit.util.Comparator.orderByStartDateAsc;
+import static ru.practicum.shareit.util.Comparator.orderByStartDateDesc;
 
 @Service
 @RequiredArgsConstructor
