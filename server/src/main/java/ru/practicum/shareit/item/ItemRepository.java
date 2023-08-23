@@ -10,7 +10,7 @@ import ru.practicum.shareit.request.ItemRequest;
 import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findAllByOwnerId(long ownerId, Pageable page);
+    List<Item> findAllByOwnerIdOrderById(long ownerId, Pageable page);
 
     @Query(value = "SELECT item FROM Item item " +
             "WHERE item.available = TRUE " +

@@ -152,7 +152,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public Collection<ItemAllFieldsDto> findItemsByUserId(long userId, Pageable page) {
-        List<Item> items = itemRepository.findAllByOwnerId(userId, page);
+        List<Item> items = itemRepository.findAllByOwnerIdOrderById(userId, page);
         return findItemsDto(items, userId);
     }
 

@@ -269,7 +269,7 @@ class ItemServiceImplTests {
     void shouldReturnItemsDtoWhenFindItemsByUserId() {
         List<Item> items = Collections.singletonList(item);
 
-        when(mockItemRepository.findAllByOwnerId(user.getId(), Pageable.unpaged())).thenReturn(items);
+        when(mockItemRepository.findAllByOwnerIdOrderById(user.getId(), Pageable.unpaged())).thenReturn(items);
 
         Collection<ItemAllFieldsDto> result = itemService.findItemsByUserId(user.getId(), Pageable.unpaged());
 
@@ -278,7 +278,7 @@ class ItemServiceImplTests {
         assertThat(result.iterator().next().getId(), equalTo(item.getId()));
         assertThat(result.iterator().next().getName(), equalTo(item.getName()));
 
-        verify(mockItemRepository, times(1)).findAllByOwnerId(user.getId(), Pageable.unpaged());
+        verify(mockItemRepository, times(1)).findAllByOwnerIdOrderById(user.getId(), Pageable.unpaged());
     }
 
     @Test
