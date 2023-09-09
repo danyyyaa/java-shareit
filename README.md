@@ -62,6 +62,7 @@
 ---
 
 Схема базы данных:
+![Untitled](https://github.com/danyyyaa/java-shareit/assets/118910569/bda62f58-7196-4f40-ad0e-0a194cf83d69)
 
-![image](https://github.com/danyyyaa/java-shareit/assets/118910569/f4598a5b-9ea3-4374-baa6-d9d891334498)
+
 
